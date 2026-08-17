@@ -11,6 +11,9 @@
         header h1 { margin: 0 0 10px 0; font-size: 2.5rem; letter-spacing: 1px; }
         header p { margin: 0; color: #b4b4b4; }
         
+        /* Cookie Score Counter display on top */
+        .cookie-counter { font-size: 1.2rem; color: #ffd700; margin-top: 10px; font-weight: bold; }
+        
         /* --- Card Layout & Base Elements --- */
         .button-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 10px; }
         .character-card { background: #373737; border-radius: 12px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.2s; cursor: pointer; border: 2px solid transparent; box-sizing: border-box; }
@@ -19,7 +22,7 @@
         .menu-btn { border-radius: 12px; border: none; padding: 12px 24px; font-size: 16px; font-weight: bold; width: 100%; transition: 0.2s; cursor: pointer; }
 
         /* --- Amirali Monochrome Theme --- */
-        .card-amirali { background-color: rgb(255, 254, 193);; border-color: #555555; }
+        .card-amirali { background-color: rgb(255, 254, 193); color: #000000; border-color: #555555; }
         .card-amirali:hover { transform: translateY(-5px); border-color: #ffffff; box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
         .btn-amirali { background: #535353; color: #e6e6e6; }
         .card-amirali:hover .btn-amirali { background: #ffffff; color: #000000; box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
@@ -34,6 +37,29 @@
         .card-vlada:hover { transform: translateY(-5px); box-shadow: 0 0 20px rgba(217, 212, 132, 0.4); }
         .btn-vlada { background: #485523; color: #9f4998; }
         .card-vlada:hover .btn-vlada { background: #f3f0ce; box-shadow: 0 0 15px rgba(243, 240, 206, 0.6); }
+
+        /* --- Lock Overlay Styles --- */
+        .character-card.is-locked {
+            position: relative;
+            background: #1a1a1a !important;
+            color: #555555 !important;
+            border-color: #2a2a2a !important;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        .character-card.is-locked .menu-btn {
+            background: #2a2a2a !important;
+            color: #555555 !important;
+            cursor: not-allowed;
+            box-shadow: none !important;
+        }
+        .lock-notice {
+            font-size: 0.9rem;
+            color: #ff4d4d;
+            margin-top: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -41,24 +67,66 @@
         <header>
             <h1>Clicker Universe</h1>
             <p>Select your planet to load your saved data and begin clicking!</p>
+            <!-- Displays the running global score -->
+            <div class="cookie-counter" id="cookieDisplay">Total Cookies: 0</div>
         </header>
         
         <div class="button-group">
-            <div class="character-card card-amirali" onclick="window.location.href='./amirali.html'">
+            <!-- Amirali: Unlocked by default (Requires 0 cookies) -->
+            <div class="character-card card-amirali" data-required="0" data-url="./amirali.html">
                 <h2>Amirali</h2>
                 <button class="menu-btn btn-amirali">Enter Planet</button>
+                <div class="lock-notice"></div>
             </div>
             
-            <div class="character-card card-kenneth" onclick="window.location.href='./kenneth.html'">
+            <!-- Kenneth: Requires 100 cookies to enter -->
+            <div class="character-card card-kenneth" data-required="100" data-url="./kenneth.html">
                 <h2>Kenneth</h2>
                 <button class="menu-btn btn-kenneth">Enter Planet</button>
+                <div class="lock-notice"></div>
             </div>
             
-            <div class="character-card card-vlada" onclick="window.location.href='./vlada.html'">
+            <!-- Vlada: Requires 500 cookies to enter -->
+            <div class="character-card card-vlada" data-required="500" data-url="./vlada.html">
                 <h2>Vlada</h2>
                 <button class="menu-btn btn-vlada">Enter Planet</button>
+                <div class="lock-notice"></div>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // 1. Fetch your user's cookie progress out of storage (defaults to 0 if new player)
+            const totalCookies = parseInt(localStorage.getItem("totalCookies")) || 0;
+            
+            // 2. Update visual text counter header
+            document.getElementById("cookieDisplay").innerText = `Total Cookies: ${totalCookies}`;
+
+            // 3. Process each card to check restrictions
+            const cards = document.querySelectorAll(".character-card");
+
+            cards.forEach(card => {
+                const required = parseInt(card.getAttribute("data-required"));
+                const targetUrl = card.getAttribute("data-url");
+                const noticeElement = card.querySelector(".lock-notice");
+                const buttonElement = card.querySelector(".menu-btn");
+
+                if (totalCookies >= required) {
+                    // --- PLANET IS UNLOCKED ---
+                    // Allow navigating on click
+                    card.addEventListener("click", () => {
+                        window.location.href = targetUrl;
+                    });
+                    noticeElement.innerText = ""; // Clear notice text
+                } else {
+                    // --- PLANET IS LOCKED ---
+                    card.classList.add("is-locked");
+                    noticeElement.innerText = `🔒 Requires ${required} Cookies`;
+                    buttonElement.innerText = "Locked";
+                }
+            });
+        });
+    </script>
 </body>
 </html>
