@@ -25,6 +25,8 @@ let cursorButton = document.getElementById("cursorButton")
 let cursorCounter = document.getElementById("cursorCounter")
 let autoBuyCursor = document.getElementById("autoBuyCursor")
 
+let resetButton = document.getElementById("resetButton");
+
 function updateDisplay() {
     cookieCounter.innerHTML = cookies
     cursorCounter.innerHTML = cursors
@@ -45,6 +47,34 @@ function saveGame() {
     localStorage.setItem("autoBuyCursorPrice", autoBuyCursorPrice);
     localStorage.setItem("autoBuyClickPowerPrice", autoBuyClickPowerPrice);
 }
+
+resetButton.addEventListener('click', () => {
+    if (confirm("Are you sure you want to completely reset your progress?")) {
+        localStorage.clear();
+        cookies = 0;
+        cursors = 0;
+        cursorPrice = 10;
+        clickPowerPrice = 50;
+        clickPower = 1;
+        rebirthPrice = 5000;
+        autoBuyCursorPrice = 500;
+        autoBuyClickPowerPrice = 2500;
+        
+        if (autoBuyCursorInterval) {
+            clearInterval(autoBuyCursorInterval);
+            autoBuyCursorInterval = null;
+        }
+        if (autoBuyClickPowerInterval) {
+            clearInterval(autoBuyClickPowerInterval);
+            autoBuyClickPowerInterval = null;
+        }
+        autoBuyCursor.style.display = "block";
+        autoBuyClickPower.style.display = "block";
+        
+        updateDisplay();
+        saveGame();
+    }
+});
 
 cookieImage.addEventListener('click', (ev) => {
     cookies += clickPower;
