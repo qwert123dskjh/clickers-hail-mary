@@ -1,12 +1,42 @@
-const menuButton = document.getElementById("menuButton");
+function formatNumber(num) {
+    if (num < 1e3) return num.toString();
 
-menuButton.addEventListener("click", () => {
-    window.location.href = "index.html"; 
-});
+    const standardSuffixes = ['K', 'M', 'B', 'T'];
+    const tier = Math.floor(Math.log10(num) / 3);
+    
+    let suffix = '';
 
+    if (tier <= standardSuffixes.length) {
+        suffix = standardSuffixes[tier - 1];
+    } else {
+        const alphabetIndex = tier - (standardSuffixes.length + 1);
+        const firstChar = String.fromCharCode(97 + Math.floor(alphabetIndex / 26));
+        const secondChar = String.fromCharCode(97 + (alphabetIndex % 26));
+        suffix = firstChar + secondChar;
+    }
+
+    const scaled = num / Math.pow(10, tier * 3);
+    return scaled.toFixed(2).replace(/\.00$/, '') + suffix;
+}
+
+// 1. Load data variables immediately so they are available globally
+let cookies = localStorage.getItem("cookies") ? parseInt(localStorage.getItem("cookies")) : 0;
+let cursors = localStorage.getItem("cursors") ? parseInt(localStorage.getItem("cursors")) : 0;
+let cursorPrice = localStorage.getItem("cursorPrice") ? parseInt(localStorage.getItem("cursorPrice")) : 10;
+let clickPowerPrice = localStorage.getItem("clickPowerPrice") ? parseInt(localStorage.getItem("clickPowerPrice")) : 50;
+let clickPower = localStorage.getItem("clickPower") ? parseInt(localStorage.getItem("clickPower")) : 1;
+let rebirthPrice = localStorage.getItem("rebirthPrice") ? parseInt(localStorage.getItem("rebirthPrice")) : 5000;
+let autoBuyCursorPrice = localStorage.getItem("autoBuyCursorPrice") ? parseInt(localStorage.getItem("autoBuyCursorPrice")) : 500;
+let autoBuyClickPowerPrice = localStorage.getItem("autoBuyClickPowerPrice") ? parseInt(localStorage.getItem("autoBuyClickPowerPrice")) : 2500;
+let autoBuyIsTrue = false;
+
+let autoBuyCursorInterval = null;
+let autoBuyClickPowerInterval = null;
+
+// Global Data Storage sync function
 function saveGame() {
     localStorage.setItem("cookies", cookies);
-    localStorage.setItem("totalCookies", cookies); // Added: Updates the index.html planet locker
+    localStorage.setItem("totalCookies", cookies); // Syncs directly to the main menu planet lock system
     localStorage.setItem("cursors", cursors);
     localStorage.setItem("cursorPrice", cursorPrice);
     localStorage.setItem("clickPowerPrice", clickPowerPrice);
@@ -16,175 +46,194 @@ function saveGame() {
     localStorage.setItem("autoBuyClickPowerPrice", autoBuyClickPowerPrice);
 }
 
-resetButton.addEventListener('click', () => {
-    if (confirm("Are you sure you want to completely reset your progress?")) {
-        localStorage.clear();
-        cookies = 0;
-        cursors = 0;
-        cursorPrice = 10;
-        clickPowerPrice = 50;
-        clickPower = 1;
-        rebirthPrice = 5000;
-        autoBuyCursorPrice = 500;
-        autoBuyClickPowerPrice = 2500;
-        
-        if (autoBuyCursorInterval) {
-            clearInterval(autoBuyCursorInterval);
-            autoBuyCursorInterval = null;
-        }
-        if (autoBuyClickPowerInterval) {
-            clearInterval(autoBuyClickPowerInterval);
-            autoBuyClickPowerInterval = null;
-        }
-        autoBuyCursor.style.display = "block";
-        autoBuyClickPower.style.display = "block";
-        
-        updateDisplay();
-        saveGame();
-    }
-});
-
-cookieImage.addEventListener('click', (ev) => {
-    cookies += clickPower;
-    cookieCounter.innerHTML = formatNumber(cookies); // Added formatNumber for scannability
-    saveGame();
-});
-
-cursorButton.addEventListener('click', (ev) => {
-    if (cookies >= cursorPrice) {
-        cookies -= cursorPrice;
-        cursors += 1;
-        cursorCounter.innerHTML = cursors;
-        cookieCounter.innerHTML = formatNumber(cookies);
-        cursorPrice = Math.floor(cursorPrice * 1.25);
-        cursorPriceText.innerHTML = formatNumber(cursorPrice);
-        saveGame();
-    }
-});
-
-autoBuyCursor.addEventListener('click', autoBuyCursor_funcCheck);
-
-function autoBuyCursor_funcCheck() {
-    if (cookies >= autoBuyCursorPrice) {
-        cookies -= autoBuyCursorPrice;
-        autoBuyCursor_func();
-    }
-}
-
-let autoBuyCursorInterval = null;
-function autoBuyCursor_func() {
-    autoBuyCursor.style.display = "none";
-    if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
-    autoBuyCursorInterval = setInterval(() => {
-        if (cookies >= cursorPrice) {
-            cookies -= cursorPrice;
-            cursors += 1;
-            cursorCounter.innerHTML = cursors;
-            cookieCounter.innerHTML = formatNumber(cookies);
-            cursorPrice = Math.floor(cursorPrice * 1.25);
-            cursorPriceText.innerHTML = formatNumber(cursorPrice);
-            saveGame();
-        }
-    }, 100);
-    if (autoBuyToggle.value == "On") {
-        autoBuyIsTrue = true;
-    } else {
-        autoBuyIsTrue = false;
-    }
-}
-
-clickPowerButton.addEventListener('click', (ev) => {
-    if (cookies >= clickPowerPrice) {
-        cookies -= clickPowerPrice;
-        clickPower += 1;
-        clickPowerCounter.innerHTML = clickPower;
-        cookieCounter.innerHTML = formatNumber(cookies);
-        clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
-        clickPowerPriceText.innerHTML = formatNumber(clickPowerPrice);
-        saveGame();
-    }
-});
-
-autoBuyClickPower.addEventListener('click', autoBuyClickPower_funcCheck);
-
-function autoBuyClickPower_funcCheck() {
-    if (cookies >= autoBuyClickPowerPrice) {
-        cookies -= autoBuyClickPowerPrice;
-        autoBuyClickPower_func();
-    }
-}
-
-let autoBuyClickPowerInterval = null;
-function autoBuyClickPower_func() {
-    autoBuyClickPower.style.display = "none";
-    if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
-    autoBuyClickPowerInterval = setInterval(() => {
-        if (cookies >= clickPowerPrice) {
-            cookies -= clickPowerPrice;
-            clickPower += 1;
-            clickPowerCounter.innerHTML = clickPower;
-            cookieCounter.innerHTML = formatNumber(cookies);
-            clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
-            clickPowerPriceText.innerHTML = formatNumber(clickPowerPrice);
-            saveGame();
-        }
-    }, 100);
-}
-
-rebirth.addEventListener('click', (ev) => {
-    if (cookies >= rebirthPrice) {
-        cookies -= rebirthPrice;
-        cursors = 0;
-        clickPower = 1;
-        
-        cursorPrice = 10;
-        clickPowerPrice = 50;
-        
-        cookieCounter.innerHTML = formatNumber(cookies);
-        cursorCounter.innerHTML = cursors;
-        clickPowerCounter.innerHTML = clickPower;
-        cursorPriceText.innerHTML = formatNumber(cursorPrice);
-        clickPowerPriceText.innerHTML = formatNumber(clickPowerPrice);
-        
-        rebirthPrice = Math.floor(rebirthPrice * 2);
-        rebirthPriceText.innerHTML = formatNumber(rebirthPrice);
-        
-        autoBuyCursorPrice = Math.floor(autoBuyCursorPrice / 1.5);
-        autoBuyClickPowerPrice = Math.floor(autoBuyClickPowerPrice / 1.5);
-
-        if (autoBuyCursorInterval) {
-            clearInterval(autoBuyCursorInterval);
-            autoBuyCursorInterval = null;
-        }
-        if (autoBuyClickPowerInterval) {
-            clearInterval(autoBuyClickPowerInterval);
-            autoBuyClickPowerInterval = null;
-        }
-        autoBuyCursor.style.display = "block";
-        autoBuyClickPower.style.display = "block";
-        saveGame();
-    }
-});
-
-// Passive generation loop (Saves to storage every single second now!)
-setInterval(() => {
-    cookies += cursors;
-    cookieCounter.innerHTML = formatNumber(cookies);
-    saveGame(); 
-}, 1000);
-
-// Fixed your cut-off code snippet from the bottom of your prompt
-setInterval(() => {
-    if (cookies >= cursorPrice) {
-        cursorButton.classList.add("affordable");
-    } else {
-        cursorButton.classList.remove("affordable");
-    }
+// 2. WAIT for the HTML document structure to map out fully before finding elements
+document.addEventListener("DOMContentLoaded", () => {
     
-    // Optional extension: Add affordable class for click power button
-    if (cookies >= clickPowerPrice) {
-        clickPowerButton.classList.add("affordable");
-    } else {
-        clickPowerButton.classList.remove("affordable");
+    // Map layout DOM elements safely
+    const autoBuyToggle = document.getElementById("autoBuyDropdown");
+    const rebirthPriceText = document.getElementById("rebirthPrice");
+    const clickPowerPriceText = document.getElementById("clickPowerPrice");
+    const clickPowerButton = document.getElementById("clickPowerButton");
+    const clickPowerCounter = document.getElementById("clickPowerCounter");
+    const autoBuyClickPower = document.getElementById("autoBuyClickPower");
+    const cookieCounter = document.getElementById("counter");
+    const cookieImage = document.getElementById("mainbutton");
+    const cursorPriceText = document.getElementById("cursorPrice");
+    const cursorButton = document.getElementById("cursorButton");
+    const cursorCounter = document.getElementById("cursorCounter");
+    const autoBuyCursor = document.getElementById("autoBuyCursor");
+    const resetButton = document.getElementById("resetButton");
+    const rebirthButton = document.getElementById("rebirth");
+
+    function updateDisplay() {
+        if (cookieCounter) cookieCounter.innerHTML = formatNumber(cookies);
+        if (cursorCounter) cursorCounter.innerHTML = formatNumber(cursors);
+        if (clickPowerCounter) clickPowerCounter.innerHTML = formatNumber(clickPower);
+        if (cursorPriceText) cursorPriceText.innerHTML = formatNumber(cursorPrice);
+        if (clickPowerPriceText) clickPowerPriceText.innerHTML = formatNumber(clickPowerPrice);
+        if (rebirthPriceText) rebirthPriceText.innerHTML = formatNumber(rebirthPrice);
     }
-}, 100);
+    updateDisplay();
+
+    // Primary Click Button Logic
+    if (cookieImage) {
+        cookieImage.addEventListener('click', (ev) => {
+            cookies += clickPower;
+            if (cookieCounter) cookieCounter.innerHTML = formatNumber(cookies);
+            saveGame();
+        });
+    }
+
+    // Upgrade Cursor Shop Button Logic
+    if (cursorButton) {
+        cursorButton.addEventListener('click', (ev) => {
+            if (cookies >= cursorPrice) {
+                cookies -= cursorPrice;
+                cursors += 1;
+                saveGame();
+                updateDisplay();
+            }
+        });
+    }
+
+    // Auto-Buy Cursors Setup
+    if (autoBuyCursor) {
+        autoBuyCursor.addEventListener('click', () => {
+            if (cookies >= autoBuyCursorPrice) {
+                cookies -= autoBuyCursorPrice;
+                autoBuyCursor.style.display = "none";
+                
+                if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
+                autoBuyCursorInterval = setInterval(() => {
+                    if (cookies >= cursorPrice) {
+                        cookies -= cursorPrice;
+                        cursors += 1;
+                        cursorPrice = Math.floor(cursorPrice * 1.25);
+                        saveGame();
+                        updateDisplay();
+                    }
+                }, 100);
+
+                if (autoBuyToggle && autoBuyToggle.value === "On") {
+                    autoBuyIsTrue = true;
+                } else {
+                    autoBuyIsTrue = false;
+                }
+                saveGame();
+                updateDisplay();
+            }
+        });
+    }
+
+    // Upgrade Click Power Logic
+    if (clickPowerButton) {
+        clickPowerButton.addEventListener('click', (ev) => {
+            if (cookies >= clickPowerPrice) {
+                cookies -= clickPowerPrice;
+                clickPower += 1;
+                clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
+                saveGame();
+                updateDisplay();
+            }
+        });
+    }
+
+    // Auto-Buy Click Power Setup
+    if (autoBuyClickPower) {
+        autoBuyClickPower.addEventListener('click', () => {
+            if (cookies >= autoBuyClickPowerPrice) {
+                cookies -= autoBuyClickPowerPrice;
+                autoBuyClickPower.style.display = "none";
+                
+                if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
+                autoBuyClickPowerInterval = setInterval(() => {
+                    if (cookies >= clickPowerPrice) {
+                        cookies -= clickPowerPrice;
+                        clickPower += 1;
+                        clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
+                        saveGame();
+                        updateDisplay();
+                    }
+                }, 100);
+                saveGame();
+                updateDisplay();
+            }
+        });
+    }
+
+    // Rebirth Processing Logic
+    if (rebirthButton) {
+        rebirthButton.addEventListener('click', (ev) => {
+            if (cookies >= rebirthPrice) {
+                cookies -= rebirthPrice;
+                cursors = 0;
+                clickPower = 1;
+                cursorPrice = 10;
+                clickPowerPrice = 50;
+                rebirthPrice = Math.floor(rebirthPrice * 2);
+                autoBuyCursorPrice = Math.floor(autoBuyCursorPrice / 1.5);
+                autoBuyClickPowerPrice = Math.floor(autoBuyClickPowerPrice / 1.5);
+
+                if (autoBuyCursorInterval) {
+                    clearInterval(autoBuyCursorInterval);
+                    autoBuyCursorInterval = null;
+                }
+                if (autoBuyClickPowerInterval) {
+                    clearInterval(autoBuyClickPowerInterval);
+                    autoBuyClickPowerInterval = null;
+                }
+                if (autoBuyCursor) autoBuyCursor.style.display = "block";
+                if (autoBuyClickPower) autoBuyClickPower.style.display = "block";
+                
+                saveGame();
+                updateDisplay();
+            }
+        });
+    }
+
+    // Reset Progress Button Logic
+    if (resetButton) {
+        resetButton.addEventListener('click', () => {
+            if (confirm("Are you sure you want to completely reset your progress?")) {
+                localStorage.clear();
+                cookies = 0;
+                cursors = 0;
+                cursorPrice = 10;
+                clickPowerPrice = 50;
+                clickPower = 1;
+                rebirthPrice = 5000;
+                autoBuyCursorPrice = 500;
+                autoBuyClickPowerPrice = 2500;
+                
+                if (autoBuyCursorInterval) {
+                    clearInterval(autoBuyCursorInterval);
+                    autoBuyCursorInterval = null;
+                }
+                if (autoBuyClickPowerInterval) {
+                    clearInterval(autoBuyClickPowerInterval);
+                    autoBuyClickPowerInterval = null;
+                }
+                if (autoBuyCursor) autoBuyCursor.style.display = "block";
+                if (autoBuyClickPower) autoBuyClickPower.style.display = "block";
+                
+                saveGame();
+                updateDisplay();
+            }
+        });
+    }
+
+    // Passive generation tracking loop (Adds automated cursor clicks every second)
+    setInterval(() => {
+        cookies += cursors;
+        saveGame();
+        updateDisplay();
+    }, 1000);
+
+    // Active button affordable style updating loop
+    setInterval(() => {
+        if (cursorButton) {
+            if (cookies >= cursorPrice) cursorButton.classList.add("affordable");
+            else cursorButton.classList.remove("affordable");
+        }
+        if (clickPowerButton) {
+            if (cookies >= clickPowerPrice) clickPowerButton.classList.add("affordable");
