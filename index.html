@@ -5,129 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Choose Your Clicker</title>
     <style>
-        body {
-            margin: 0px;
-            background-color: black;
-            color: rgb(230, 230, 230);
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+        body { margin: 0; background: black; color: #e6e6e6; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .menu-container { text-align: center; padding: 40px 20px; max-width: 900px; width: 100%; }
+        header { background: #373737; border-radius: 12px; padding: 20px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        header h1 { margin: 0 0 10px 0; font-size: 2.5rem; letter-spacing: 1px; }
+        header p { margin: 0; color: #b4b4b4; }
+        
+        /* --- Card Layout & Base Elements --- */
+        .button-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 10px; }
+        .character-card { background: #373737; border-radius: 12px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.2s; cursor: pointer; border: 2px solid transparent; box-sizing: border-box; }
+        .character-card:active { transform: scale(0.98); }
+        .character-card h2 { margin: 0 0 15px 0; font-size: 1.5rem; }
+        .menu-btn { border-radius: 12px; border: none; padding: 12px 24px; font-size: 16px; font-weight: bold; width: 100%; transition: 0.2s; cursor: pointer; }
 
-        .menu-container {
-            text-align: center;
-            padding: 40px 20px;
-            max-width: 900px;
-            width: 100%;
-        }
+        /* --- Amirali Monochrome Theme --- */
+        .card-amirali { background: #262626; border-color: #555555; }
+        .card-amirali:hover { transform: translateY(-5px); border-color: #ffffff; box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
+        .btn-amirali { background: #535353; color: #e6e6e6; }
+        .card-amirali:hover .btn-amirali { background: #ffffff; color: #000000; box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
 
-        header {
-            background-color: rgb(55, 55, 55);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        }
+        /* --- Kenneth Green Theme --- */
+        .card-kenneth:hover { transform: translateY(-5px); box-shadow: 0 0 20px rgba(6, 226, 47, 0.4); }
+        .btn-kenneth { background: #535353; color: #e6e6e6; }
+        .card-kenneth:hover .btn-kenneth { background: #06e22f; color: black; box-shadow: 0 0 15px rgba(6, 226, 47, 0.6); }
 
-        header h1 {
-            margin: 0 0 10px 0;
-            font-size: 2.5rem;
-            letter-spacing: 1px;
-        }
-
-        header p {
-            margin: 0;
-            color: rgb(180, 180, 180);
-        }
-
-        .button-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 10px;
-        }
-
-        .character-card {
-            background-color: rgb(55, 55, 55);
-            border-radius: 12px;
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-        }
-
-        .character-card:active {
-            transform: scale(0.98);
-        }
-
-        .character-card h2 {
-            margin: 0 0 15px 0;
-            font-size: 1.5rem;
-        }
-
-        .menu-btn {
-            border-radius: 12px;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s;
-            width: 100%;
-        }
-
-        /* AMIRALI THEME (Dark Theme with Green Highlights) */
-        .card-amirali:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 20px rgba(6, 226, 47, 0.4);
-        }
-        .btn-amirali {
-            background-color: rgb(83, 83, 83);
-            color: rgb(230, 230, 230);
-        }
-        .card-amirali:hover .btn-amirali {
-            background-color: rgb(6, 226, 47);
-            color: black;
-            box-shadow: 0 0 15px rgba(6, 226, 47, 0.6);
-        }
-
-        /* KENNETH THEME (Identical to Amirali's Gray and Green Theme) */
-        .card-kenneth:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 20px rgba(6, 226, 47, 0.4);
-        }
-        .btn-kenneth {
-            background-color: rgb(83, 83, 83);
-            color: rgb(230, 230, 230);
-        }
-        .card-kenneth:hover .btn-kenneth {
-            background-color: rgb(6, 226, 47);
-            color: black;
-            box-shadow: 0 0 15px rgba(6, 226, 47, 0.6);
-        }
-
-        /* VLADA THEME (Original Retro Olive Green and Purple Theme) */
-        .card-vlada {
-            background-color: rgb(217, 212, 132);
-            color: rgb(159, 73, 152);
-        }
-        .card-vlada:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 20px rgba(217, 212, 132, 0.4);
-        }
-        .btn-vlada {
-            background-color: rgb(72, 85, 35);
-            color: rgb(159, 73, 152);
-        }
-        .card-vlada:hover .btn-vlada {
-            background-color: rgb(243, 240, 206);
-            box-shadow: 0 0 15px rgba(243, 240, 206, 0.6);
-        }
+        /* --- Vlada Retro Theme --- */
+        .card-vlada { background: #d9d484; color: #9f4998; }
+        .card-vlada:hover { transform: translateY(-5px); box-shadow: 0 0 20px rgba(217, 212, 132, 0.4); }
+        .btn-vlada { background: #485523; color: #9f4998; }
+        .card-vlada:hover .btn-vlada { background: #f3f0ce; box-shadow: 0 0 15px rgba(243, 240, 206, 0.6); }
     </style>
 </head>
 <body>
