@@ -1,10 +1,24 @@
 function formatNumber(num) {
-    if (num >= 1e12) return (num / 1e12).toFixed(2).replace(/\.00$/, '') + 'T';
-    if (num >= 1e9) return (num / 1e9).toFixed(2).replace(/\.00$/, '') + 'B';
-    if (num >= 1e6) return (num / 1e6).toFixed(2).replace(/\.00$/, '') + 'M';
-    if (num >= 1e3) return (num / 1e3).toFixed(2).replace(/\.00$/, '') + 'K';
-    return num.toString();
+    if (num < 1e3) return num.toString();
+
+    const standardSuffixes = ['K', 'M', 'B', 'T'];
+    const tier = Math.floor(Math.log10(num) / 3);
+    
+    let suffix = '';
+
+    if (tier <= standardSuffixes.length) {
+        suffix = standardSuffixes[tier - 1];
+    } else {
+        const alphabetIndex = tier - (standardSuffixes.length + 1);
+        const firstChar = String.fromCharCode(97 + Math.floor(alphabetIndex / 26));
+        const secondChar = String.fromCharCode(97 + (alphabetIndex % 26));
+        suffix = firstChar + secondChar;
+    }
+
+    const scaled = num / Math.pow(10, tier * 3);
+    return scaled.toFixed(2).replace(/\.00$/, '') + suffix;
 }
+
 
 let cookies = localStorage.getItem("vlada_cookies") ? parseInt(localStorage.getItem("vlada_cookies")) : 0;
 let cursors = localStorage.getItem("vlada_cursors") ? parseInt(localStorage.getItem("vlada_cursors")) : 0;
