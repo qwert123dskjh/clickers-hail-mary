@@ -101,6 +101,18 @@ button:active {
     padding: 12px 12px;
 }
 
+.small-reset-btn {
+    font-size: x-small;
+    padding: 4px 8px;
+    margin-top: 10px;
+    background-color: rgb(172, 172, 172);
+    cursor: pointer;
+}
+
+.small-reset-btn:hover {
+    font-size: small;
+}
+
 body {
     margin: 0px;
     background-color: black;
