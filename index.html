@@ -79,15 +79,15 @@
                 <div class="lock-notice"></div>
             </div>
             
-            <!-- Kenneth: Requires 100 cookies to enter -->
-            <div class="character-card card-kenneth" data-required="100" data-url="./kenneth.html">
+            <!-- Kenneth: Requires 10000 cookies to enter -->
+            <div class="character-card card-kenneth" data-required="10000" data-url="./kenneth.html">
                 <h2>Kenneth</h2>
                 <button class="menu-btn btn-kenneth">Enter Planet</button>
                 <div class="lock-notice"></div>
             </div>
             
-            <!-- Vlada: Requires 500 cookies to enter -->
-            <div class="character-card card-vlada" data-required="500" data-url="./vlada.html">
+            <!-- Vlada: Requires 50000 cookies to enter -->
+            <div class="character-card card-vlada" data-required="50000" data-url="./vlada.html">
                 <h2>Vlada</h2>
                 <button class="menu-btn btn-vlada">Enter Planet</button>
                 <div class="lock-notice"></div>
@@ -122,7 +122,7 @@
                 } else {
                     // --- PLANET IS LOCKED ---
                     card.classList.add("is-locked");
-                    noticeElement.innerText = `🔒 Requires ${required} Cookies`;
+                    noticeElement.innerText = `Requires ${required} Cookies`;
                     buttonElement.innerText = "Locked";
                 }
             });
