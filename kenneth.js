@@ -1,11 +1,20 @@
-let cookies = localStorage.getItem("cookies") ? parseInt(localStorage.getItem("cookies")) : 0;
-let cursors = localStorage.getItem("cursors") ? parseInt(localStorage.getItem("cursors")) : 0;
-let cursorPrice = localStorage.getItem("cursorPrice") ? parseInt(localStorage.getItem("cursorPrice")) : 10;
-let clickPowerPrice = localStorage.getItem("clickPowerPrice") ? parseInt(localStorage.getItem("clickPowerPrice")) : 50;
-let clickPower = localStorage.getItem("clickPower") ? parseInt(localStorage.getItem("clickPower")) : 1;
-let rebirthPrice = localStorage.getItem("rebirthPrice") ? parseInt(localStorage.getItem("rebirthPrice")) : 5000;
-let autoBuyCursorPrice = localStorage.getItem("autoBuyCursorPrice") ? parseInt(localStorage.getItem("autoBuyCursorPrice")) : 500;
-let autoBuyClickPowerPrice = localStorage.getItem("autoBuyClickPowerPrice") ? parseInt(localStorage.getItem("autoBuyClickPowerPrice")) : 2500;
+function formatNumber(num) {
+    if (num >= 1e12) return (num / 1e12).toFixed(2).replace(/\.00$/, '') + 'T';
+    if (num >= 1e9) return (num / 1e9).toFixed(2).replace(/\.00$/, '') + 'B';
+    if (num >= 1e6) return (num / 1e6).toFixed(2).replace(/\.00$/, '') + 'M';
+    if (num >= 1e3) return (num / 1e3).toFixed(2).replace(/\.00$/, '') + 'K';
+    return num.toString();
+}
+
+let cookies = localStorage.getItem("kenneth_cookies") ? parseInt(localStorage.getItem("kenneth_cookies")) : 0;
+let cursors = localStorage.getItem("kenneth_cursors") ? parseInt(localStorage.getItem("kenneth_cursors")) : 0;
+let cursorPrice = localStorage.getItem("kenneth_cursorPrice") ? parseInt(localStorage.getItem("kenneth_cursorPrice")) : 10;
+let clickPowerPrice = localStorage.getItem("kenneth_clickPowerPrice") ? parseInt(localStorage.getItem("kenneth_clickPowerPrice")) : 50;
+let clickPower = localStorage.getItem("kenneth_clickPower") ? parseInt(localStorage.getItem("kenneth_clickPower")) : 1;
+let rebirthPrice = localStorage.getItem("kenneth_rebirthPrice") ? parseInt(localStorage.getItem("kenneth_rebirthPrice")) : 5000;
+let autoBuyCursorPrice = localStorage.getItem("kenneth_autoBuyCursorPrice") ? parseInt(localStorage.getItem("kenneth_autoBuyCursorPrice")) : 500;
+let autoBuyClickPowerPrice = localStorage.getItem("kenneth_autoBuyClickPowerPrice") ? parseInt(localStorage.getItem("kenneth_autoBuyClickPowerPrice")) : 2500;
+let rebirths = localStorage.getItem("kenneth_rebirths") ? parseInt(localStorage.getItem("kenneth_rebirths")) : 0;
 
 let autoBuyToggle = document.getElementById("autoBuyDropdown")
 let autoBuyIsTrue = false;
@@ -28,29 +37,39 @@ let autoBuyCursor = document.getElementById("autoBuyCursor")
 let resetButton = document.getElementById("resetButton");
 
 function updateDisplay() {
-    cookieCounter.innerHTML = cookies
-    cursorCounter.innerHTML = cursors
-    clickPowerCounter.innerHTML = clickPower
-    cursorPriceText.innerHTML = cursorPrice
-    clickPowerPriceText.innerHTML = clickPowerPrice
-    rebirthPriceText.innerHTML = rebirthPrice
+    cookieCounter.innerHTML = formatNumber(cookies)
+    cursorCounter.innerHTML = formatNumber(cursors)
+    clickPowerCounter.innerHTML = formatNumber(clickPower)
+    cursorPriceText.innerHTML = formatNumber(cursorPrice)
+    clickPowerPriceText.innerHTML = formatNumber(clickPowerPrice)
+    rebirthPriceText.innerHTML = formatNumber(rebirthPrice)
 }
 updateDisplay();
 
 function saveGame() {
-    localStorage.setItem("cookies", cookies);
-    localStorage.setItem("cursors", cursors);
-    localStorage.setItem("cursorPrice", cursorPrice);
-    localStorage.setItem("clickPowerPrice", clickPowerPrice);
-    localStorage.setItem("clickPower", clickPower);
-    localStorage.setItem("rebirthPrice", rebirthPrice);
-    localStorage.setItem("autoBuyCursorPrice", autoBuyCursorPrice);
-    localStorage.setItem("autoBuyClickPowerPrice", autoBuyClickPowerPrice);
+    localStorage.setItem("kenneth_cookies", cookies);
+    localStorage.setItem("kenneth_cursors", cursors);
+    localStorage.setItem("kenneth_cursorPrice", cursorPrice);
+    localStorage.setItem("kenneth_clickPowerPrice", clickPowerPrice);
+    localStorage.setItem("kenneth_clickPower", clickPower);
+    localStorage.setItem("kenneth_rebirthPrice", rebirthPrice);
+    localStorage.setItem("kenneth_autoBuyCursorPrice", autoBuyCursorPrice);
+    localStorage.setItem("kenneth_autoBuyClickPowerPrice", autoBuyClickPowerPrice);
+    localStorage.setItem("kenneth_rebirths", rebirths);
 }
 
 resetButton.addEventListener('click', () => {
     if (confirm("Are you sure you want to completely reset your progress?")) {
-        localStorage.clear();
+        localStorage.removeItem("kenneth_cookies");
+        localStorage.removeItem("kenneth_cursors");
+        localStorage.removeItem("kenneth_cursorPrice");
+        localStorage.removeItem("kenneth_clickPowerPrice");
+        localStorage.removeItem("kenneth_clickPower");
+        localStorage.removeItem("kenneth_rebirthPrice");
+        localStorage.removeItem("kenneth_autoBuyCursorPrice");
+        localStorage.removeItem("kenneth_autoBuyClickPowerPrice");
+        localStorage.removeItem("kenneth_rebirths");
+
         cookies = 0;
         cursors = 0;
         cursorPrice = 10;
@@ -59,6 +78,7 @@ resetButton.addEventListener('click', () => {
         rebirthPrice = 5000;
         autoBuyCursorPrice = 500;
         autoBuyClickPowerPrice = 2500;
+        rebirths = 0;
         
         if (autoBuyCursorInterval) {
             clearInterval(autoBuyCursorInterval);
@@ -78,17 +98,17 @@ resetButton.addEventListener('click', () => {
 
 cookieImage.addEventListener('click', (ev) => {
     cookies += clickPower;
-    cookieCounter.innerHTML = cookies
+    cookieCounter.innerHTML = formatNumber(cookies)
     saveGame();
 })
 cursorButton.addEventListener('click', (ev) => {
     if (cookies >= cursorPrice) {
         cookies -= cursorPrice;
         cursors += 1
-        cursorCounter.innerHTML = cursors
-        cookieCounter.innerHTML = cookies
+        cursorCounter.innerHTML = formatNumber(cursors)
+        cookieCounter.innerHTML = formatNumber(cookies)
         cursorPrice = Math.floor(cursorPrice * 1.25)
-        cursorPriceText.innerHTML = cursorPrice
+        cursorPriceText.innerHTML = formatNumber(cursorPrice)
         saveGame();
     }
 })
@@ -110,10 +130,10 @@ function autoBuyCursor_func() {
         if (cookies >= cursorPrice) {
             cookies -= cursorPrice;
             cursors += 1
-            cursorCounter.innerHTML = cursors
-            cookieCounter.innerHTML = cookies
+            cursorCounter.innerHTML = formatNumber(cursors)
+            cookieCounter.innerHTML = formatNumber(cookies)
             cursorPrice = Math.floor(cursorPrice * 1.25)
-            cursorPriceText.innerHTML = cursorPrice
+            cursorPriceText.innerHTML = formatNumber(cursorPrice)
             saveGame();
         }
     }, 100)
@@ -128,10 +148,10 @@ clickPowerButton.addEventListener('click', (ev) => {
     if (cookies >= clickPowerPrice) {
         cookies -= clickPowerPrice;
         clickPower += 1
-        clickPowerCounter.innerHTML = clickPower
-        cookieCounter.innerHTML = cookies
+        clickPowerCounter.innerHTML = formatNumber(clickPower)
+        cookieCounter.innerHTML = formatNumber(cookies)
         clickPowerPrice = Math.floor(clickPowerPrice * 1.1)
-        clickPowerPriceText.innerHTML = clickPowerPrice
+        clickPowerPriceText.innerHTML = formatNumber(clickPowerPrice)
         saveGame();
     }
 })
@@ -151,10 +171,10 @@ function autoBuyClickPower_func() {
         if (cookies >= clickPowerPrice) {
             cookies -= clickPowerPrice;
             clickPower += 1
-            clickPowerCounter.innerHTML = clickPower
-            cookieCounter.innerHTML = cookies
+            clickPowerCounter.innerHTML = formatNumber(clickPower)
+            cookieCounter.innerHTML = formatNumber(cookies)
             clickPowerPrice = Math.floor(clickPowerPrice * 1.1)
-            clickPowerPriceText.innerHTML = clickPowerPrice
+            clickPowerPriceText.innerHTML = formatNumber(clickPowerPrice)
             saveGame();
         }
     }, 100)
@@ -165,18 +185,19 @@ rebirth.addEventListener('click', (ev) => {
         cookies -= rebirthPrice;
         cursors = 0
         clickPower = 1
+        rebirths += 1
         
         cursorPrice = 10;
         clickPowerPrice = 50;
         
-        cookieCounter.innerHTML = cookies
-        cursorCounter.innerHTML = cursors
-        clickPowerCounter.innerHTML = clickPower
-        cursorPriceText.innerHTML = cursorPrice
-        clickPowerPriceText.innerHTML = clickPowerPrice
+        cookieCounter.innerHTML = formatNumber(cookies)
+        cursorCounter.innerHTML = formatNumber(cursors)
+        clickPowerCounter.innerHTML = formatNumber(clickPower)
+        cursorPriceText.innerHTML = formatNumber(cursorPrice)
+        clickPowerPriceText.innerHTML = formatNumber(clickPowerPrice)
         
         rebirthPrice = Math.floor(rebirthPrice * 2)
-        rebirthPriceText.innerHTML = rebirthPrice
+        rebirthPriceText.innerHTML = formatNumber(rebirthPrice)
         
         autoBuyCursorPrice = Math.floor(autoBuyCursorPrice / 1.5);
         autoBuyClickPowerPrice = Math.floor(autoBuyClickPowerPrice / 1.5);
@@ -197,7 +218,7 @@ rebirth.addEventListener('click', (ev) => {
 
 setInterval(() => {
     cookies += cursors
-    cookieCounter.innerHTML = cookies
+    cookieCounter.innerHTML = formatNumber(cookies)
     saveGame();
 }, 1000)
 
