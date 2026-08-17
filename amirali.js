@@ -237,3 +237,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (clickPowerButton) {
             if (cookies >= clickPowerPrice) clickPowerButton.classList.add("affordable");
+            else clickPowerButton.classList.remove("affordable");}}, 100);});
