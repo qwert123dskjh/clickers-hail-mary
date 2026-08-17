@@ -1,3 +1,10 @@
+const menuButton = document.getElementById("menuButton");
+
+menuButton.addEventListener("click", () => {
+    window.location.href = "index.html"; 
+});
+
+
 function formatNumber(num) {
     if (num < 1e3) return num.toString();
 
