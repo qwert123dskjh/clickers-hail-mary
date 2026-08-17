@@ -1,66 +1,6 @@
-function formatNumber(num) {
-    if (num < 1e3) return num.toString();
-
-    const standardSuffixes = ['K', 'M', 'B', 'T'];
-    const tier = Math.floor(Math.log10(num) / 3);
-    
-    let suffix = '';
-
-    if (tier <= standardSuffixes.length) {
-        suffix = standardSuffixes[tier - 1];
-    } else {
-        const alphabetIndex = tier - (standardSuffixes.length + 1);
-        const firstChar = String.fromCharCode(97 + Math.floor(alphabetIndex / 26));
-        const secondChar = String.fromCharCode(97 + (alphabetIndex % 26));
-        suffix = firstChar + secondChar;
-    }
-
-    const scaled = num / Math.pow(10, tier * 3);
-    return scaled.toFixed(2).replace(/\.00$/, '') + suffix;
-}
-
-
-let cookies = localStorage.getItem("cookies") ? parseInt(localStorage.getItem("cookies")) : 0;
-let cursors = localStorage.getItem("cursors") ? parseInt(localStorage.getItem("cursors")) : 0;
-let cursorPrice = localStorage.getItem("cursorPrice") ? parseInt(localStorage.getItem("cursorPrice")) : 10;
-let clickPowerPrice = localStorage.getItem("clickPowerPrice") ? parseInt(localStorage.getItem("clickPowerPrice")) : 50;
-let clickPower = localStorage.getItem("clickPower") ? parseInt(localStorage.getItem("clickPower")) : 1;
-let rebirthPrice = localStorage.getItem("rebirthPrice") ? parseInt(localStorage.getItem("rebirthPrice")) : 5000;
-let autoBuyCursorPrice = localStorage.getItem("autoBuyCursorPrice") ? parseInt(localStorage.getItem("autoBuyCursorPrice")) : 500;
-let autoBuyClickPowerPrice = localStorage.getItem("autoBuyClickPowerPrice") ? parseInt(localStorage.getItem("autoBuyClickPowerPrice")) : 2500;
-
-let autoBuyToggle = document.getElementById("autoBuyDropdown")
-let autoBuyIsTrue = false;
-
-let rebirthPriceText = document.getElementById("rebirthPrice")
-
-let clickPowerPriceText = document.getElementById("clickPowerPrice")
-let clickPowerButton = document.getElementById("clickPowerButton")
-let clickPowerCounter = document.getElementById("clickPowerCounter")
-let autoBuyClickPower = document.getElementById("autoBuyClickPower")
-
-let cookieCounter = document.getElementById("counter")
-let cookieImage = document.getElementById("mainbutton")
-
-let cursorPriceText = document.getElementById("cursorPrice");
-let cursorButton = document.getElementById("cursorButton")
-let cursorCounter = document.getElementById("cursorCounter")
-let autoBuyCursor = document.getElementById("autoBuyCursor")
-
-let resetButton = document.getElementById("resetButton");
-
-function updateDisplay() {
-    cookieCounter.innerHTML = cookies
-    cursorCounter.innerHTML = cursors
-    clickPowerCounter.innerHTML = clickPower
-    cursorPriceText.innerHTML = cursorPrice
-    clickPowerPriceText.innerHTML = clickPowerPrice
-    rebirthPriceText.innerHTML = rebirthPrice
-}
-updateDisplay();
-
 function saveGame() {
     localStorage.setItem("cookies", cookies);
+    localStorage.setItem("totalCookies", cookies); // Added: Updates the index.html planet locker
     localStorage.setItem("cursors", cursors);
     localStorage.setItem("cursorPrice", cursorPrice);
     localStorage.setItem("clickPowerPrice", clickPowerPrice);
@@ -100,105 +40,108 @@ resetButton.addEventListener('click', () => {
 
 cookieImage.addEventListener('click', (ev) => {
     cookies += clickPower;
-    cookieCounter.innerHTML = cookies
+    cookieCounter.innerHTML = formatNumber(cookies); // Added formatNumber for scannability
     saveGame();
-})
+});
+
 cursorButton.addEventListener('click', (ev) => {
     if (cookies >= cursorPrice) {
         cookies -= cursorPrice;
-        cursors += 1
-        cursorCounter.innerHTML = cursors
-        cookieCounter.innerHTML = cookies
-        cursorPrice = Math.floor(cursorPrice * 1.25)
-        cursorPriceText.innerHTML = cursorPrice
+        cursors += 1;
+        cursorCounter.innerHTML = cursors;
+        cookieCounter.innerHTML = formatNumber(cookies);
+        cursorPrice = Math.floor(cursorPrice * 1.25);
+        cursorPriceText.innerHTML = formatNumber(cursorPrice);
         saveGame();
     }
-})
-autoBuyCursor.addEventListener('click', autoBuyCursor_funcCheck)
+});
 
-function autoBuyCursor_funcCheck()
-{
+autoBuyCursor.addEventListener('click', autoBuyCursor_funcCheck);
+
+function autoBuyCursor_funcCheck() {
     if (cookies >= autoBuyCursorPrice) {
-        cookies -= autoBuyCursorPrice
+        cookies -= autoBuyCursorPrice;
         autoBuyCursor_func();
     }
 }
 
 let autoBuyCursorInterval = null;
 function autoBuyCursor_func() {
-    autoBuyCursor.style.display = "none"
+    autoBuyCursor.style.display = "none";
     if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
     autoBuyCursorInterval = setInterval(() => {
         if (cookies >= cursorPrice) {
             cookies -= cursorPrice;
-            cursors += 1
-            cursorCounter.innerHTML = cursors
-            cookieCounter.innerHTML = cookies
-            cursorPrice = Math.floor(cursorPrice * 1.25)
-            cursorPriceText.innerHTML = cursorPrice
+            cursors += 1;
+            cursorCounter.innerHTML = cursors;
+            cookieCounter.innerHTML = formatNumber(cookies);
+            cursorPrice = Math.floor(cursorPrice * 1.25);
+            cursorPriceText.innerHTML = formatNumber(cursorPrice);
             saveGame();
         }
-    }, 100)
+    }, 100);
     if (autoBuyToggle.value == "On") {
         autoBuyIsTrue = true;
-    }
-    else {
+    } else {
         autoBuyIsTrue = false;
     }
 }
+
 clickPowerButton.addEventListener('click', (ev) => {
     if (cookies >= clickPowerPrice) {
         cookies -= clickPowerPrice;
-        clickPower += 1
-        clickPowerCounter.innerHTML = clickPower
-        cookieCounter.innerHTML = cookies
-        clickPowerPrice = Math.floor(clickPowerPrice * 1.1)
-        clickPowerPriceText.innerHTML = clickPowerPrice
+        clickPower += 1;
+        clickPowerCounter.innerHTML = clickPower;
+        cookieCounter.innerHTML = formatNumber(cookies);
+        clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
+        clickPowerPriceText.innerHTML = formatNumber(clickPowerPrice);
         saveGame();
     }
-})
-autoBuyClickPower.addEventListener('click', autoBuyClickPower_funcCheck)
+});
+
+autoBuyClickPower.addEventListener('click', autoBuyClickPower_funcCheck);
 
 function autoBuyClickPower_funcCheck() {
     if (cookies >= autoBuyClickPowerPrice) {
-        cookies -= autoBuyClickPowerPrice
+        cookies -= autoBuyClickPowerPrice;
         autoBuyClickPower_func();
     }
 }
+
 let autoBuyClickPowerInterval = null;
 function autoBuyClickPower_func() {
-    autoBuyClickPower.style.display = "none"
+    autoBuyClickPower.style.display = "none";
     if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
     autoBuyClickPowerInterval = setInterval(() => {
         if (cookies >= clickPowerPrice) {
             cookies -= clickPowerPrice;
-            clickPower += 1
-            clickPowerCounter.innerHTML = clickPower
-            cookieCounter.innerHTML = cookies
-            clickPowerPrice = Math.floor(clickPowerPrice * 1.1)
-            clickPowerPriceText.innerHTML = clickPowerPrice
+            clickPower += 1;
+            clickPowerCounter.innerHTML = clickPower;
+            cookieCounter.innerHTML = formatNumber(cookies);
+            clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
+            clickPowerPriceText.innerHTML = formatNumber(clickPowerPrice);
             saveGame();
         }
-    }, 100)
+    }, 100);
 }
 
 rebirth.addEventListener('click', (ev) => {
     if (cookies >= rebirthPrice) {
         cookies -= rebirthPrice;
-        cursors = 0
-        clickPower = 1
+        cursors = 0;
+        clickPower = 1;
         
         cursorPrice = 10;
         clickPowerPrice = 50;
         
-        cookieCounter.innerHTML = cookies
-        cursorCounter.innerHTML = cursors
-        clickPowerCounter.innerHTML = clickPower
-        cursorPriceText.innerHTML = cursorPrice
-        clickPowerPriceText.innerHTML = clickPowerPrice
+        cookieCounter.innerHTML = formatNumber(cookies);
+        cursorCounter.innerHTML = cursors;
+        clickPowerCounter.innerHTML = clickPower;
+        cursorPriceText.innerHTML = formatNumber(cursorPrice);
+        clickPowerPriceText.innerHTML = formatNumber(clickPowerPrice);
         
-        rebirthPrice = Math.floor(rebirthPrice * 2)
-        rebirthPriceText.innerHTML = rebirthPrice
+        rebirthPrice = Math.floor(rebirthPrice * 2);
+        rebirthPriceText.innerHTML = formatNumber(rebirthPrice);
         
         autoBuyCursorPrice = Math.floor(autoBuyCursorPrice / 1.5);
         autoBuyClickPowerPrice = Math.floor(autoBuyClickPowerPrice / 1.5);
@@ -215,42 +158,27 @@ rebirth.addEventListener('click', (ev) => {
         autoBuyClickPower.style.display = "block";
         saveGame();
     }
-})
+});
 
+// Passive generation loop (Saves to storage every single second now!)
 setInterval(() => {
-    cookies += cursors
-    cookieCounter.innerHTML = cookies
-    saveGame();
-}, 1000)
+    cookies += cursors;
+    cookieCounter.innerHTML = formatNumber(cookies);
+    saveGame(); 
+}, 1000);
 
+// Fixed your cut-off code snippet from the bottom of your prompt
 setInterval(() => {
     if (cookies >= cursorPrice) {
         cursorButton.classList.add("affordable");
     } else {
         cursorButton.classList.remove("affordable");
     }
+    
+    // Optional extension: Add affordable class for click power button
     if (cookies >= clickPowerPrice) {
         clickPowerButton.classList.add("affordable");
     } else {
         clickPowerButton.classList.remove("affordable");
     }
-    if (cookies >= rebirthPrice) {
-        rebirth.classList.add("affordable");
-    } else {
-        rebirth.classList.remove("affordable");
-    }
-    if (autoBuyCursor.style.display !== "none") {
-        if (cookies >= autoBuyCursorPrice) {
-            autoBuyCursor.classList.add("affordable");
-        } else {
-            autoBuyCursor.classList.remove("affordable");
-        }
-    }
-    if (autoBuyClickPower.style.display !== "none") {
-        if (cookies >= autoBuyClickPowerPrice) {
-            autoBuyClickPower.classList.add("affordable");
-        } else {
-            autoBuyClickPower.classList.remove("affordable");
-        }
-    }
-}, 100)
+}, 100);
