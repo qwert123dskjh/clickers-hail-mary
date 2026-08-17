@@ -95,38 +95,46 @@
 </div>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // 1. Fetch your user's cookie progress out of storage (defaults to 0 if new player)
-            const totalCookies = parseInt(localStorage.getItem("totalCookies")) || 0;
-            
-            // 2. Update visual text counter header
-            document.getElementById("cookieDisplay").innerText = `Total Cookies: ${totalCookies}`;
+   <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // 1. Fetch cookie progress out of storage (defaults to 0 if brand new player)
+        const totalCookies = parseInt(localStorage.getItem("totalCookies")) || 0;
+        
+        // 2. Update visual text counter header
+        document.getElementById("cookieDisplay").innerText = `Total Cookies: ${totalCookies}`;
 
-            // 3. Process each card to check restrictions
-            const cards = document.querySelectorAll(".character-card");
+        // 3. Process each card to check restrictions
+        const cards = document.querySelectorAll(".character-card");
 
-            cards.forEach(card => {
-                const required = parseInt(card.getAttribute("data-required"));
-                const targetUrl = card.getAttribute("data-url");
-                const noticeElement = card.querySelector(".lock-notice");
-                const buttonElement = card.querySelector(".menu-btn");
+        cards.forEach(card => {
+            const required = parseInt(card.getAttribute("data-required")) || 0;
+            const targetUrl = card.getAttribute("data-url");
+            const noticeElement = card.querySelector(".lock-notice");
+            const buttonElement = card.querySelector(".menu-btn");
 
-                if (totalCookies >= required) {
-                    // --- PLANET IS UNLOCKED ---
-                    // Allow navigating on click
-                    card.addEventListener("click", () => {
-                        window.location.href = targetUrl;
-                    });
-                    noticeElement.innerText = ""; // Clear notice text
-                } else {
-                    // --- PLANET IS LOCKED ---
-                    card.classList.add("is-locked");
-                    noticeElement.innerText = `Requires ${required} Cookies`;
-                    buttonElement.innerText = "Locked";
-                }
-            });
+            // SAFETY FIX: If it requires 0 cookies, or if the user has earned enough...
+            if (required === 0 || totalCookies >= required) {
+                // --- PLANET IS UNLOCKED ---
+                card.classList.remove("is-locked"); 
+                if (noticeElement) noticeElement.innerText = ""; 
+                if (buttonElement) buttonElement.innerText = "Enter Planet";
+
+                // Bind the navigation event click handler smoothly
+                card.onclick = () => {
+                    window.location.href = targetUrl;
+                };
+            } else {
+                // --- PLANET IS LOCKED ---
+                card.classList.add("is-locked");
+                if (noticeElement) noticeElement.innerText = `🔒 Requires ${required} Cookies`;
+                if (buttonElement) buttonElement.innerText = "Locked";
+                
+                // Clear out any old click events so they can't sneak in
+                card.onclick = null;
+            }
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>
