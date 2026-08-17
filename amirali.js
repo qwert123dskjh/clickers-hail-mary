@@ -227,8 +227,8 @@ document.addEventListener("DOMContentLoaded", () => {
         cookies += cursors;
                 saveGame();
                 updateDisplay();
-            })
-        });
+            }
+        );
     }
 
     // Reset Progress Button Logic
