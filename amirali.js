@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cookies += cursors;
                 saveGame();
                 updateDisplay();
-            }
+            })
         );
     }
 
