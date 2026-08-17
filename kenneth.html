@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kenneth Clicker</title>
+    <link href="kenneth.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Kenneth Clicker</h1>
+            <p>Click Kenneth below to get kennies!</p>
+        </header>
+        <main>
+            <div id="wrapper">
+                <img src="Kenneth.jpeg" id="mainbutton">
+                <p>
+                    You have <span id="counter">0</span> kennies
+                </p>
+            </div>
+        </main>
+        <aside>
+            <h3>SHOP</h3>
+            <button id="cursorButton">Add Auto Click Cursor for <span id="cursorPrice">10</span> kennies</button>
+            <button id="clickPowerButton"> Add Kenny Power for <span id="clickPowerPrice">50</span> kennies</button>
+            <button id="autoBuyCursor">Auto Buy Cursors for 500</button>
+            <button id="autoBuyClickPower">Auto buy Kenny Power for 2500</button>
+            <button id="rebirth">Rebirth for <span id=rebirthPrice>5000</span></button>
+            <p>Rebirth doubles your base click power and reduces upgrade prices</p>
+        </aside>
+        <nav>
+            <div id="wrapper">
+                <p>You Have <span id="cursorCounter">0</span> Auto Click Cursors</p>
+                <p>You Have <span id="clickPowerCounter">1</span> Kenny Power</p>
+        </nav>
+        <footer>
+            <label for="autoBuyDropdown">Auto Buy</label>
+            <select id="autoBuyDropdown">
+                <option><button>On</button></option>
+                <option><button>Off</button></option>
+            </select>
+        </footer>
+    </div>
+    <script src="kenneth.js"></script>
+    </div>
+</body>
+
+</html>

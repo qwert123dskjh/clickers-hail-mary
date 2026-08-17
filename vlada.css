@@ -1,0 +1,189 @@
+#wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+}
+
+#mainbutton {
+    border-radius: 20%;
+    height: 200px;
+    width: 200px;
+}
+
+/* get bigger when you hover it */
+#mainbutton:hover {
+    height: 220px;
+    width: 220px;
+}
+
+/* shrink when you click it */
+#mainbutton:active {
+    height: 180px;
+    width: 180px
+}
+
+#autoBuyDropdown {
+    border-radius: 12px;
+    color: rgb(159, 73, 152);
+    background-color: rgb(217, 212, 132);
+}
+
+button {
+    border-radius: 12px;
+    color: rgb(159, 73, 152);
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+#rebirth {
+    font-size:large;
+    padding: 12px 12px;
+    background-color: rgb(72, 85, 35);
+}
+
+#rebirth:hover
+{
+    font-size: larger;
+    padding: 12px 12px;
+}
+
+#rebirth:active
+{
+    font-size: large;
+    padding: 12px 12px;
+}
+
+#cursorButton {
+    font-size:large;
+    padding: 12px 12px;
+    background-color: rgb(144, 140, 87);
+}
+
+#cursorButton:hover
+{
+    font-size: larger;
+    padding: 12px 12px;
+}
+
+#clickPowerButton {
+    font-size:large;
+    padding: 12px 12px;
+    background-color: rgb(144, 140, 87);
+}
+
+#clickPowerButton:hover
+{
+    font-size: larger;
+    padding: 12px 12px;
+}
+
+#autoBuyCursor {
+    font-size:large;
+    padding: 12px 12px;
+    background-color: rgb(144, 140, 87);
+}
+
+#autoBuyCursor:hover
+{
+    font-size: larger;
+    padding: 12px 12px;
+}
+
+#autoBuyClickPower {
+    font-size:large;
+    padding: 12px 12px;
+    background-color: rgb(144, 140, 87);
+}
+
+#autoBuyClickPower:hover 
+{
+    font-size: larger;
+    padding: 12px 12px;
+}
+
+body {
+    margin: 0px;
+    background-color: black;
+}
+
+.container {
+    color: rgb(159, 73, 152);
+    display: grid;
+    grid-template-rows: 1fr 5fr 1fr;
+    grid-template-columns: 2fr 5fr 3fr;
+    grid-template-areas:
+        "header header header"
+        "nav main aside"
+        "footer footer footer";
+    grid-gap: .75em;
+    height: 100vh;
+
+    @media(max-width: 768px) {
+        grid-template-rows: 1fr 1fr 5fr 1fr;
+        grid-template-columns: 2fr 5fr 3fr;
+        grid-template-areas:
+            "header header header"
+            "nav nav nav"
+            "main main aside"
+            "footer footer footer";
+    }
+
+    @media(max-width: 480px) {
+        display: block;
+    }
+
+    header {
+        border-radius: 12px;
+        grid-area: header;
+        background-color: rgb(217, 212, 132);
+    }
+
+    nav {
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        grid-area: nav;
+        background-color: rgb(217, 212, 132);
+    }
+
+    main {
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        grid-area: main;
+        background-color: rgb(217, 212, 132);
+    }
+
+    aside {
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        grid-area: aside;
+        background-color: rgb(217, 212, 132);
+    }
+
+    footer {
+        border-radius: 12px;
+        grid-area: footer;
+        background-color: rgb(217, 212, 132);
+    }
+}
+
+#cursorButton.affordable,
+#clickPowerButton.affordable,
+#rebirth.affordable,
+#autoBuyCursor.affordable,
+#autoBuyClickPower.affordable {
+    background-color: rgb(243, 240, 206);
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(243, 240, 206, 0.6), 0 0 30px rgba(243, 240, 206, 0.6);
+}
+
