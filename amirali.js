@@ -225,6 +225,46 @@ document.addEventListener("DOMContentLoaded", () => {
     // Passive generation tracking loop (Adds automated cursor clicks every second)
     setInterval(() => {
         cookies += cursors;
+                        saveGame();
+                updateDisplay();
+            }
+        });
+    }
+
+    // Reset Progress Button Logic
+    if (resetButton) {
+        resetButton.addEventListener('click', () => {
+            if (confirm("Are you sure you want to completely reset your progress?")) {
+                localStorage.clear();
+                cookies = 0;
+                cursors = 0;
+                cursorPrice = 10;
+                clickPowerPrice = 50;
+                clickPower = 1;
+                rebirthPrice = 5000;
+                autoBuyCursorPrice = 500;
+                autoBuyClickPowerPrice = 2500;
+                
+                if (autoBuyCursorInterval) {
+                    clearInterval(autoBuyCursorInterval);
+                    autoBuyCursorInterval = null;
+                }
+                if (autoBuyClickPowerInterval) {
+                    clearInterval(autoBuyClickPowerInterval);
+                    autoBuyClickPowerInterval = null;
+                }
+                if (autoBuyCursor) autoBuyCursor.style.display = "block";
+                if (autoBuyClickPower) autoBuyClickPower.style.display = "block";
+                
+                saveGame();
+                updateDisplay();
+            }
+        });
+    }
+
+    // Passive generation tracking loop (Adds automated cursor clicks every second)
+    setInterval(() => {
+        cookies += cursors;
         saveGame();
         updateDisplay();
     }, 1000);
@@ -232,11 +272,20 @@ document.addEventListener("DOMContentLoaded", () => {
     // Active button affordable style updating loop
     setInterval(() => {
         if (cursorButton) {
-            if (cookies >= cursorPrice) cursorButton.classList.add("affordable");
-            else cursorButton.classList.remove("affordable");
+            if (cookies >= cursorPrice) {
+                cursorButton.classList.add("affordable");
+            } else {
+                cursorButton.classList.remove("affordable");
+            }
         }
         if (clickPowerButton) {
-            if (cookies >= clickPowerPrice) clickPowerButton.classList.add("affordable");
-            else clickPowerButton.classList.remove("affordable");}}, 100);
+            if (cookies >= clickPowerPrice) {
+                clickPowerButton.classList.add("affordable");
+            } else {
+                clickPowerButton.classList.remove("affordable");
+            }
+        }
+    }, 100);
 
 });
+
