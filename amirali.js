@@ -225,9 +225,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Passive generation tracking loop (Adds automated cursor clicks every second)
     setInterval(() => {
         cookies += cursors;
-                        saveGame();
+                saveGame();
                 updateDisplay();
-            }
+            })
         });
     }
 
