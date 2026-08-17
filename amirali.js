@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-            // Rebirth Processing Logic
+    // Rebirth Processing Logic
     if (rebirthButton) {
         rebirthButton.addEventListener('click', (ev) => {
             if (cookies >= rebirthPrice) {
@@ -240,12 +240,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (clickPowerButton) {
             if (cookies >= clickPowerPrice) {
-                clickPowerButton.classList.add("affordable");
-            } else {
-                clickPowerButton.classList.remove("affordable");
-            }
-        }
-    }, 100);
-
-});
-
+clickPowerButton.classList.add("affordable");} else {clickPowerButton.classList.remove("affordable");}}}, 100);});
