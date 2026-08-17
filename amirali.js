@@ -1,3 +1,9 @@
+const menuButton = document.getElementById("menuButton");
+
+menuButton.addEventListener("click", () => {
+    window.location.href = "index.html"; 
+});
+
 function saveGame() {
     localStorage.setItem("cookies", cookies);
     localStorage.setItem("totalCookies", cookies); // Added: Updates the index.html planet locker
