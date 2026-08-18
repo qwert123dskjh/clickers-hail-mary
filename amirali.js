@@ -189,6 +189,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 rebirthPrice = Math.floor(rebirthPrice * 2);
                 autoBuyCursorPrice = Math.floor(autoBuyCursorPrice / 1.5);
                 autoBuyClickPowerPrice = Math.floor(autoBuyClickPowerPrice / 1.5);
+                autoBuyCursorUnlocked = false;
+                autoBuyClickPowerUnlocked = false;
 
                 if (autoBuyCursorInterval) {
                     clearInterval(autoBuyCursorInterval);
@@ -206,6 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
 
     // Reset Progress Button Logic
     if (resetButton) {
