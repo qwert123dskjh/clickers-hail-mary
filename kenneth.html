@@ -42,14 +42,15 @@
         </nav>
         <footer>
             <label for="autoBuyDropdown">Auto Buy</label>
+            <!-- FIX: Removed the nested <button> elements inside options so value reads perfectly -->
             <select id="autoBuyDropdown">
-                <option><button>On</button></option>
-                <option><button>Off</button></option>
+                <option value="On">On</option>
+                <option value="Off">Off</option>
             </select>
         </footer>
     </div>
     <script src="kenneth.js"></script>
-    </div>
+    <!-- FIX: Removed the trailing stray </div> that was right here -->
 </body>
 
 </html>
