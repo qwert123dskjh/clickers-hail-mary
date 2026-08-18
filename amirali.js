@@ -181,9 +181,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (rebirthButton) {
         rebirthButton.addEventListener('click', (ev) => {
             if (cookies >= rebirthPrice) {
-                cookies -= rebirthPrice;
+                cookies = 0;
                 cursors = 0;
-                clickPower = 1;
+                clickPower = clickPower * 2;
                 cursorPrice = 10;
                 clickPowerPrice = 50;
                 rebirthPrice = Math.floor(rebirthPrice * 2);
