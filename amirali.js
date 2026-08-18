@@ -33,10 +33,13 @@ let autoBuyIsTrue = false;
 let autoBuyCursorInterval = null;
 let autoBuyClickPowerInterval = null;
 
-// Global Data Storage sync function
+let autoBuyCursorUnlocked = localStorage.getItem("autoBuyCursorUnlocked") === "true";
+let autoBuyClickPowerUnlocked = localStorage.getItem("autoBuyClickPowerUnlocked") === "true";
+
+
 function saveGame() {
     localStorage.setItem("cookies", cookies);
-    localStorage.setItem("totalCookies", cookies); // Syncs directly to the main menu planet lock system
+    localStorage.setItem("totalCookies", cookies); 
     localStorage.setItem("cursors", cursors);
     localStorage.setItem("cursorPrice", cursorPrice);
     localStorage.setItem("clickPowerPrice", clickPowerPrice);
@@ -44,7 +47,10 @@ function saveGame() {
     localStorage.setItem("rebirthPrice", rebirthPrice);
     localStorage.setItem("autoBuyCursorPrice", autoBuyCursorPrice);
     localStorage.setItem("autoBuyClickPowerPrice", autoBuyClickPowerPrice);
+    localStorage.setItem("autoBuyCursorUnlocked", autoBuyCursorUnlocked);
+    localStorage.setItem("autoBuyClickPowerUnlocked", autoBuyClickPowerUnlocked);
 }
+
 
 // 2. WAIT for the HTML document structure to map out fully before finding elements
 document.addEventListener("DOMContentLoaded", () => {
