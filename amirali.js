@@ -102,20 +102,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-        // Auto-Buy Cursors Setup
+          // Auto-Buy Cursors Setup
     if (autoBuyCursor) {
         autoBuyCursor.addEventListener('click', () => {
-            // Check if player can afford the UNLOCK itself
             if (cookies >= autoBuyCursorPrice) {
                 cookies -= autoBuyCursorPrice;
-                autoBuyCursor.style.display = "none"; // Hide the buy button forever
+                autoBuyCursor.style.display = "none"; 
+                autoBuyCursorUnlocked = true;
                 
-                // Clear any old intervals just in case
                 if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
-                
-                // Start the background interval loop (runs every 100ms)
                 autoBuyCursorInterval = setInterval(() => {
-                    // CRUCIAL FIX: Look at the dropdown value dynamically right now!
                     if (autoBuyToggle && autoBuyToggle.value === "On") {
                         if (cookies >= cursorPrice) {
                             cookies -= cursorPrice;
@@ -132,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
 
 
     // Upgrade Click Power Logic
@@ -155,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (cookies >= autoBuyClickPowerPrice) {
                 cookies -= autoBuyClickPowerPrice;
                 autoBuyClickPower.style.display = "none"; // Hide the buy button forever
-                
+                autoBuyClickPowerUnlocked = true;
                 // Clear any old intervals just in case
                 if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
                 
@@ -260,3 +257,33 @@ document.addEventListener("DOMContentLoaded", () => {
         if (clickPowerButton) {
             if (cookies >= clickPowerPrice) {
 clickPowerButton.classList.add("affordable");} else {clickPowerButton.classList.remove("affordable");}}}, 100);});
+    // --- RESTORE AUTO-BUY LOOPS ON PAGE LOAD ---
+    if (autoBuyCursorUnlocked) {
+        if (autoBuyCursor) autoBuyCursor.style.display = "none";
+        autoBuyCursorInterval = setInterval(() => {
+            if (autoBuyToggle && autoBuyToggle.value === "On") {
+                if (cookies >= cursorPrice) {
+                    cookies -= cursorPrice;
+                    cursors += 1;
+                    cursorPrice = Math.floor(cursorPrice * 1.25);
+                    saveGame();
+                    updateDisplay();
+                }
+            }
+        }, 100);
+    }
+
+    if (autoBuyClickPowerUnlocked) {
+        if (autoBuyClickPower) autoBuyClickPower.style.display = "none";
+        autoBuyClickPowerInterval = setInterval(() => {
+            if (autoBuyToggle && autoBuyToggle.value === "On") {
+                if (cookies >= clickPowerPrice) {
+                    cookies -= clickPowerPrice;
+                    clickPower += 1;
+                    clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
+                    saveGame();
+                    updateDisplay();
+                }
+            }
+        }, 100);
+    }
