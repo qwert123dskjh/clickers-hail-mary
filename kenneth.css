@@ -24,7 +24,7 @@
     width: 180px
 }
 
-#backButton {
+#menuButton {
     font-size: small;
     padding: 8px 16px;
     background-color: #ffffff;
@@ -35,7 +35,7 @@
     transition: background-color 0.2s, transform 0.1s;
 }
 
-#backButton:hover {
+#menuButton:hover {
     background-color: #ffffff;
     color: #000000;
 }
