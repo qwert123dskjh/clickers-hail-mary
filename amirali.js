@@ -277,8 +277,29 @@ clickPowerButton.classList.add("affordable");} else {clickPowerButton.classList.
         }, 100);
     }
 
+     // --- RESTORE AUTO-BUY LOOPS ON PAGE LOAD ---
+    // Added safety check: Only run loops if the variables are true AND the buttons are hidden
+    if (autoBuyCursorUnlocked) {
+        if (autoBuyCursor) autoBuyCursor.style.display = "none";
+        
+        if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
+        autoBuyCursorInterval = setInterval(() => {
+            if (autoBuyToggle && autoBuyToggle.value === "On") {
+                if (cookies >= cursorPrice) {
+                    cookies -= cursorPrice;
+                    cursors += 1;
+                    cursorPrice = Math.floor(cursorPrice * 1.25);
+                    saveGame();
+                    updateDisplay();
+                }
+            }
+        }, 100);
+    }
+
     if (autoBuyClickPowerUnlocked) {
         if (autoBuyClickPower) autoBuyClickPower.style.display = "none";
+        
+        if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
         autoBuyClickPowerInterval = setInterval(() => {
             if (autoBuyToggle && autoBuyToggle.value === "On") {
                 if (cookies >= clickPowerPrice) {
@@ -291,3 +312,4 @@ clickPowerButton.classList.add("affordable");} else {clickPowerButton.classList.
             }
         }, 100);
     }
+
