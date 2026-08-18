@@ -96,37 +96,37 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Auto-Buy Cursors Setup
+        // Auto-Buy Cursors Setup
     if (autoBuyCursor) {
         autoBuyCursor.addEventListener('click', () => {
-            if (autoBuyToggle && autoBuyToggle.value === "On") {
-                    
+            // Check if player can afford the UNLOCK itself
             if (cookies >= autoBuyCursorPrice) {
                 cookies -= autoBuyCursorPrice;
-                autoBuyCursor.style.display = "none";
+                autoBuyCursor.style.display = "none"; // Hide the buy button forever
                 
+                // Clear any old intervals just in case
                 if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
+                
+                // Start the background interval loop (runs every 100ms)
                 autoBuyCursorInterval = setInterval(() => {
-                    if (cookies >= cursorPrice) {
-                        cookies -= cursorPrice;
-                        cursors += 1;
-                        cursorPrice = Math.floor(cursorPrice * 1.25);
-                        saveGame();
-                        updateDisplay();
+                    // CRUCIAL FIX: Look at the dropdown value dynamically right now!
+                    if (autoBuyToggle && autoBuyToggle.value === "On") {
+                        if (cookies >= cursorPrice) {
+                            cookies -= cursorPrice;
+                            cursors += 1;
+                            cursorPrice = Math.floor(cursorPrice * 1.25);
+                            saveGame();
+                            updateDisplay();
+                        }
                     }
                 }, 100);
-            }
 
-                if (autoBuyToggle && autoBuyToggle.value === "On") {
-                    autoBuyIsTrue = true;
-                } else {
-                    autoBuyIsTrue = false;
-                }
                 saveGame();
                 updateDisplay();
             }
         });
     }
+
 
     // Upgrade Click Power Logic
     if (clickPowerButton) {
@@ -142,27 +142,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Auto-Buy Click Power Setup
+        // Auto-Buy Click Power Setup
     if (autoBuyClickPower) {
         autoBuyClickPower.addEventListener('click', () => {
+            // Check if player can afford the UNLOCK itself
             if (cookies >= autoBuyClickPowerPrice) {
                 cookies -= autoBuyClickPowerPrice;
-                autoBuyClickPower.style.display = "none";
+                autoBuyClickPower.style.display = "none"; // Hide the buy button forever
                 
+                // Clear any old intervals just in case
                 if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
+                
+                // Start the background interval loop (runs every 100ms)
                 autoBuyClickPowerInterval = setInterval(() => {
-                    if (cookies >= clickPowerPrice) {
-                        cookies -= clickPowerPrice;
-                        clickPower += 1;
-                        clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
-                        saveGame();
-                        updateDisplay();
+                    // CRUCIAL FIX: Look at the dropdown value dynamically right now!
+                    if (autoBuyToggle && autoBuyToggle.value === "On") {
+                        if (cookies >= clickPowerPrice) {
+                            cookies -= clickPowerPrice;
+                            clickPower += 1;
+                            clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
+                            saveGame();
+                            updateDisplay();
+                        }
                     }
                 }, 100);
+
                 saveGame();
                 updateDisplay();
             }
         });
     }
+
 
     // Rebirth Processing Logic
     if (rebirthButton) {
