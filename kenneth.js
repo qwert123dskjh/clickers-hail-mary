@@ -19,7 +19,7 @@ function formatNumber(num) {
     return scaled.toFixed(2).replace(/\.00$/, '') + suffix;
 }
 
-// 1. UNIQUE SEPARATE STORAGE KEYS FOR KENNETH ('kenneth_...')
+// 1. UNIQUE STORAGE KEYS FOR KENNETH (Isolated from cookies & vladis)
 let kennies = localStorage.getItem("kenneth_kennies") ? parseInt(localStorage.getItem("kenneth_kennies")) : 0;
 let cursors = localStorage.getItem("kenneth_cursors") ? parseInt(localStorage.getItem("kenneth_cursors")) : 0;
 let cursorPrice = localStorage.getItem("kenneth_cursorPrice") ? parseInt(localStorage.getItem("kenneth_cursorPrice")) : 10;
@@ -28,36 +28,38 @@ let clickPower = localStorage.getItem("kenneth_clickPower") ? parseInt(localStor
 let rebirthPrice = localStorage.getItem("kenneth_rebirthPrice") ? parseInt(localStorage.getItem("kenneth_rebirthPrice")) : 5000;
 let autoBuyCursorPrice = localStorage.getItem("kenneth_autoBuyCursorPrice") ? parseInt(localStorage.getItem("kenneth_autoBuyCursorPrice")) : 500;
 let autoBuyClickPowerPrice = localStorage.getItem("kenneth_autoBuyClickPowerPrice") ? parseInt(localStorage.getItem("kenneth_autoBuyClickPowerPrice")) : 2500;
-
-let autoBuyCursorUnlocked = localStorage.getItem("kenneth_autoBuyCursorUnlocked") === "true";
-let autoBuyClickPowerUnlocked = localStorage.getItem("kenneth_autoBuyClickPowerUnlocked") === "true";
 let autoBuyIsTrue = false;
 
 let autoBuyCursorInterval = null;
 let autoBuyClickPowerInterval = null;
 
-// Sync system that keeps planets independent but still shares the total score for the index lock
+let autoBuyCursorUnlocked = localStorage.getItem("kenneth_autoBuyCursorUnlocked") === "true";
+let autoBuyClickPowerUnlocked = localStorage.getItem("kenneth_autoBuyClickPowerUnlocked") === "true";
+
+
 function saveGame() {
     localStorage.setItem("kenneth_kennies", kennies);
     localStorage.setItem("kenneth_cursors", cursors);
     localStorage.setItem("kenneth_cursorPrice", cursorPrice);
-    localStorage.setItem("kenneth_clickPowerPrice", clickPowerPrice); // FIX: Added kenneth_ prefix
-    localStorage.setItem("kenneth_clickPower", clickPower);           // FIX: Added kenneth_ prefix
+    localStorage.setItem("kenneth_clickPowerPrice", clickPowerPrice);
+    localStorage.setItem("kenneth_clickPower", clickPower);
     localStorage.setItem("kenneth_rebirthPrice", rebirthPrice);
     localStorage.setItem("kenneth_autoBuyCursorPrice", autoBuyCursorPrice);
     localStorage.setItem("kenneth_autoBuyClickPowerPrice", autoBuyClickPowerPrice);
     localStorage.setItem("kenneth_autoBuyCursorUnlocked", autoBuyCursorUnlocked);
     localStorage.setItem("kenneth_autoBuyClickPowerUnlocked", autoBuyClickPowerUnlocked);
 
-    // CRUCIAL: Combine Kenneth score into total global clicks so index.html unlocks step 3
+    // Sync cumulative score for index.html leaderboard requirements
     const amiraliCookies = parseInt(localStorage.getItem("cookies")) || 0; 
-    const vladaCookies = parseInt(localStorage.getItem("vlada_cookies")) || 0;
-    localStorage.setItem("totalCookies", amiraliCookies + kennies + vladaCookies);
+    const vladaVladis = parseInt(localStorage.getItem("vlada_vladis")) || 0;
+    localStorage.setItem("totalCookies", amiraliCookies + kennies + vladaVladis);
 }
 
-// 2. Map Layout Sequence
+
+// 2. WAIT for the HTML document structure to map out fully before finding elements
 document.addEventListener("DOMContentLoaded", () => {
     
+    // Map layout DOM elements safely
     const autoBuyToggle = document.getElementById("autoBuyDropdown");
     const rebirthPriceText = document.getElementById("rebirthPrice");
     const clickPowerPriceText = document.getElementById("clickPowerPrice");
@@ -83,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     updateDisplay();
 
-    // Restore active state loops if bought earlier
+    // Restore Auto-Buy Cursors Loop on Reload
     if (autoBuyCursorUnlocked) {
         if (autoBuyCursor) autoBuyCursor.style.display = "none";
         if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
@@ -100,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 100);
     }
 
+    // Restore Auto-Buy Click Power Loop on Reload
     if (autoBuyClickPowerUnlocked) {
         if (autoBuyClickPower) autoBuyClickPower.style.display = "none";
         if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
@@ -116,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 100);
     }
 
-    // Core Click Action
+    // Primary Click Button Logic
     if (cookieImage) {
         cookieImage.addEventListener('click', (ev) => {
             kennies += clickPower;
@@ -125,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Purchase Cursor Action
+    // Upgrade Cursor Shop Button Logic
     if (cursorButton) {
         cursorButton.addEventListener('click', (ev) => {
             if (kennies >= cursorPrice) {
@@ -137,12 +140,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Unlock Auto Buy Cursors
+    // Auto-Buy Cursors Setup
     if (autoBuyCursor) {
         autoBuyCursor.addEventListener('click', () => {
             if (kennies >= autoBuyCursorPrice) {
                 kennies -= autoBuyCursorPrice;
-                autoBuyCursor.style.display = "none";
+                autoBuyCursor.style.display = "none"; 
                 autoBuyCursorUnlocked = true;
                 
                 if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
@@ -164,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Purchase Click Power Upgrades
+    // Upgrade Click Power Logic
     if (clickPowerButton) {
         clickPowerButton.addEventListener('click', (ev) => {
             if (kennies >= clickPowerPrice) {
@@ -177,12 +180,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Unlock Auto Buy Click Power
+    // Auto-Buy Click Power Setup
     if (autoBuyClickPower) {
         autoBuyClickPower.addEventListener('click', () => {
             if (kennies >= autoBuyClickPowerPrice) {
                 kennies -= autoBuyClickPowerPrice;
-                autoBuyClickPower.style.display = "none";
+                autoBuyClickPower.style.display = "none"; 
                 autoBuyClickPowerUnlocked = true;
                 
                 if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
@@ -204,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Prestige Reset (Rebirth) Logic
+    // Rebirth Processing Logic
     if (rebirthButton) {
         rebirthButton.addEventListener('click', (ev) => {
             if (kennies >= rebirthPrice) {
@@ -220,4 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 autoBuyCursorUnlocked = false;
                 autoBuyClickPowerUnlocked = false;
 
-                if (autoBuyCursorInterval) {clearInterval(autoBuyCursorInterval);autoBuyCursorInterval = null;}if (autoBuyClickPowerInterval) {clearInterval(autoBuyClickPowerInterval);autoBuyClickPowerInterval = null;}if (autoBuyCursor) autoBuyCursor.style.display = "block";if (autoBuyClickPower) autoBuyClickPower.style.display = "block";saveGame();updateDisplay();}});}// Reset Progress Button Logicif (resetButton) {resetButton.addEventListener('click', () => {if (confirm("Completely reset your Kenneth data? (This won't wipe Amirali!)")) {kennies = 0;cursors = 0;cursorPrice = 10;clickPowerPrice = 50;clickPower = 1;rebirthPrice = 5000;autoBuyCursorPrice = 500;autoBuyClickPowerPrice = 2500;autoBuyCursorUnlocked = false;autoBuyClickPowerUnlocked = false;if (autoBuyCursorInterval) {clearInterval(autoBuyCursorInterval);autoBuyCursorInterval = null;}if (autoBuyClickPowerInterval) {clearInterval(autoBuyClickPowerInterval);autoBuyClickPowerInterval = null;}if (autoBuyCursor) autoBuyCursor.style.display = "block";if (autoBuyClickPower) autoBuyClickPower.style.display = "block";saveGame();updateDisplay();}});}// Passive CPS LoopsetInterval(() => {kennies += cursors;saveGame();updateDisplay();}, 1000);// Affordable CSS Highlighting LoopsetInterval(() => {if (cursorButton) {if (kennies >= cursorPrice) cursorButton.classList.add("affordable");else cursorButton.classList.remove("affordable");}if (clickPowerButton) {if (kennies >= clickPowerPrice) clickPowerButton.classList.add("affordable");else clickPowerButton.classList.remove("affordable");}}, 100);});
+
+            if (autoBuyCursorInterval) {clearInterval(autoBuyCursorInterval);autoBuyCursorInterval = null;}if (autoBuyClickPowerInterval) {clearInterval(autoBuyClickPowerInterval);autoBuyClickPowerInterval = null;}if (autoBuyCursor) autoBuyCursor.style.display = "block";if (autoBuyClickPower) autoBuyClickPower.style.display = "block";saveGame();updateDisplay();}});}// Reset Progress Button Logicif (resetButton) {resetButton.addEventListener('click', () => {if (confirm("Are you sure you want to completely reset your Kenneth progress?")) {kennies = 0;cursors = 0;cursorPrice = 10;clickPowerPrice = 50;clickPower = 1;rebirthPrice = 5000;autoBuyCursorPrice = 500;autoBuyClickPowerPrice = 2500;autoBuyCursorUnlocked = false;autoBuyClickPowerUnlocked = false;if (autoBuyCursorInterval) {clearInterval(autoBuyCursorInterval);autoBuyCursorInterval = null;}if (autoBuyClickPowerInterval) {clearInterval(autoBuyClickPowerInterval);autoBuyClickPowerInterval = null;}if (autoBuyCursor) autoBuyCursor.style.display = "block";if (autoBuyClickPower) autoBuyClickPower.style.display = "block";saveGame();updateDisplay();}});}// Passive generation tracking loop (Adds automated cursor clicks every second)
+    setInterval(() => {kennies += cursors;saveGame();updateDisplay();}, 1000);// Active button affordable style updating loop
+    setInterval(() => {if (cursorButton) {if (kennies >= cursorPrice) {cursorButton.classList.add("affordable");} else {cursorButton.classList.remove("affordable");}}if (clickPowerButton) {if (kennies >= clickPowerPrice) {clickPowerButton.classList.add("affordable");} else {clickPowerButton.classList.remove("affordable");}}}, 100);});
