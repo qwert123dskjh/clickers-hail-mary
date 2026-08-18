@@ -220,7 +220,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 rebirthPrice = 5000;
                 autoBuyCursorPrice = 500;
                 autoBuyClickPowerPrice = 2500;
-                
+                autoBuyCursorUnlocked = false;
+                autoBuyClickPowerUnlocked = false;
                 if (autoBuyCursorInterval) {
                     clearInterval(autoBuyCursorInterval);
                     autoBuyCursorInterval = null;
