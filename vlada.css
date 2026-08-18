@@ -10,29 +10,52 @@
     border-radius: 20%;
     height: 200px;
     width: 200px;
+    transition: transform 0.1s, width 0.1s, height 0.1s;
 }
 
-/* get bigger when you hover it */
 #mainbutton:hover {
     height: 220px;
     width: 220px;
 }
 
-/* shrink when you click it */
 #mainbutton:active {
     height: 180px;
-    width: 180px
+    width: 180px;
+}
+
+#menuButton {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 20px;
+    background-color: #485523; /* Darker accent olive/green */
+    color: #f3f0ce;            /* Retro light text */
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    margin: 15px 0 0 15px;
+    box-shadow: 0 0 10px rgba(72, 85, 35, 0.5);
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+#menuButton:hover {
+    background-color: #f3f0ce;
+    color: #485523;
+    box-shadow: 0 0 15px rgba(243, 240, 206, 0.8);
+}
+
+#menuButton:active {
+    transform: scale(0.95);
 }
 
 #autoBuyDropdown {
     border-radius: 12px;
-    color: rgb(159, 73, 152);
-    background-color: rgb(217, 212, 132);
+    color: #9f4998;
+    background-color: #f3f0ce;
 }
 
 button {
     border-radius: 12px;
-    color: rgb(159, 73, 152);
+    color: #f3f0ce;
     transition: background-color 0.2s, box-shadow 0.2s;
 }
 
@@ -41,67 +64,21 @@ button:active {
 }
 
 #rebirth {
-    font-size:large;
-    padding: 12px 12px;
-    background-color: rgb(72, 85, 35);
-}
-
-#rebirth:hover
-{
-    font-size: larger;
-    padding: 12px 12px;
-}
-
-#rebirth:active
-{
     font-size: large;
     padding: 12px 12px;
+    background-color: #485523;
 }
 
-#cursorButton {
-    font-size:large;
+#rebirth:hover { font-size: larger; padding: 12px 12px; }
+#rebirth:active { font-size: large; padding: 12px 12px; }
+
+#cursorButton, #clickPowerButton, #autoBuyCursor, #autoBuyClickPower {
+    font-size: large;
     padding: 12px 12px;
-    background-color: rgb(144, 140, 87);
+    background-color: #485523;
 }
 
-#cursorButton:hover
-{
-    font-size: larger;
-    padding: 12px 12px;
-}
-
-#clickPowerButton {
-    font-size:large;
-    padding: 12px 12px;
-    background-color: rgb(144, 140, 87);
-}
-
-#clickPowerButton:hover
-{
-    font-size: larger;
-    padding: 12px 12px;
-}
-
-#autoBuyCursor {
-    font-size:large;
-    padding: 12px 12px;
-    background-color: rgb(144, 140, 87);
-}
-
-#autoBuyCursor:hover
-{
-    font-size: larger;
-    padding: 12px 12px;
-}
-
-#autoBuyClickPower {
-    font-size:large;
-    padding: 12px 12px;
-    background-color: rgb(144, 140, 87);
-}
-
-#autoBuyClickPower:hover 
-{
+#cursorButton:hover, #clickPowerButton:hover, #autoBuyCursor:hover, #autoBuyClickPower:hover {
     font-size: larger;
     padding: 12px 12px;
 }
@@ -110,7 +87,7 @@ button:active {
     font-size: x-small;
     padding: 4px 8px;
     margin-top: 10px;
-    background-color: rgb(144, 140, 87);
+    background-color: #485523;
     cursor: pointer;
 }
 
@@ -124,7 +101,7 @@ body {
 }
 
 .container {
-    color: rgb(159, 73, 152);
+    color: #9f4998;
     display: grid;
     grid-template-rows: 1fr 5fr 1fr;
     grid-template-columns: 2fr 5fr 3fr;
@@ -134,8 +111,10 @@ body {
         "footer footer footer";
     grid-gap: .75em;
     height: 100vh;
+}
 
-    @media(max-width: 768px) {
+@media(max-width: 768px) {
+    .container {
         grid-template-rows: 1fr 1fr 5fr 1fr;
         grid-template-columns: 2fr 5fr 3fr;
         grid-template-areas:
@@ -144,57 +123,36 @@ body {
             "main main aside"
             "footer footer footer";
     }
-
-    @media(max-width: 480px) {
-        display: block;
-    }
-
-    header {
-        border-radius: 12px;
-        grid-area: header;
-        background-color: rgb(217, 212, 132);
-    }
-
-    nav {
-        border-radius: 12px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        grid-area: nav;
-        background-color: rgb(217, 212, 132);
-    }
-
-    main {
-        border-radius: 12px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        grid-area: main;
-        background-color: rgb(217, 212, 132);
-    }
-
-    aside {
-        border-radius: 12px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        grid-area: aside;
-        background-color: rgb(217, 212, 132);
-    }
-
-    footer {
-        border-radius: 12px;
-        grid-area: footer;
-        background-color: rgb(217, 212, 132);
-    }
 }
 
+@media(max-width: 480px) {
+    .container { display: block; }
+}
+
+header, nav, main, aside, footer {
+    border-radius: 12px;
+    background-color: #d9d484; /* Main Golden-Khaki Vlada theme */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+header { grid-area: header; }
+nav { grid-area: nav; }
+main { grid-area: main; }
+aside { grid-area: aside; }
+footer { grid-area: footer; }
+
+/* Affordable glow highlights specific to Vlada's palette */
 #cursorButton.affordable,
 #clickPowerButton.affordable,
 #rebirth.affordable,
 #autoBuyCursor.affordable,
 #autoBuyClickPower.affordable {
-    background-color: rgb(243, 240, 206);
+    background-color: #f3f0ce;
+    color: #485523;
     cursor: pointer;
-    box-shadow: 0 0 15px rgba(243, 240, 206, 0.6), 0 0 30px rgba(243, 240, 206, 0.6);
+    box-shadow: 0 0 15px rgba(243, 240, 206, 0.6), 0 0 30px rgba(243, 240, 206, 0.3);
 }
