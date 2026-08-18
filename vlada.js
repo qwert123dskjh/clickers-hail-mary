@@ -19,7 +19,7 @@ function formatNumber(num) {
     return scaled.toFixed(2).replace(/\.00$/, '') + suffix;
 }
 
-// 1. UNIQUE VAULT STORAGE KEYS FOR VLADA ('vlada_...')
+// 1. UNIQUE STORAGE KEYS FOR VLADA
 let vladis = localStorage.getItem("vlada_vladis") ? parseInt(localStorage.getItem("vlada_vladis")) : 0;
 let cursors = localStorage.getItem("vlada_cursors") ? parseInt(localStorage.getItem("vlada_cursors")) : 0;
 let cursorPrice = localStorage.getItem("vlada_cursorPrice") ? parseInt(localStorage.getItem("vlada_cursorPrice")) : 10;
@@ -48,13 +48,13 @@ function saveGame() {
     localStorage.setItem("vlada_autoBuyCursorUnlocked", autoBuyCursorUnlocked);
     localStorage.setItem("vlada_autoBuyClickPowerUnlocked", autoBuyClickPowerUnlocked);
 
-    // CRUCIAL SYNC: Combine scores across all 3 profiles seamlessly
+    // Sync score across all profiles
     const amiraliCookies = parseInt(localStorage.getItem("cookies")) || 0; 
     const kennethKennies = parseInt(localStorage.getItem("kenneth_kennies")) || 0;
     localStorage.setItem("totalCookies", amiraliCookies + kennethKennies + vladis);
 }
 
-// 2. Map Layout Elements
+// 2. WAIT for HTML structure to map out fully
 document.addEventListener("DOMContentLoaded", () => {
     
     const autoBuyToggle = document.getElementById("autoBuyDropdown");
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     updateDisplay();
 
-    // Reload Safe Restore Automators
+    // Restore Auto-Buy Cursors Loop
     if (autoBuyCursorUnlocked) {
         if (autoBuyCursor) autoBuyCursor.style.display = "none";
         if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
@@ -99,6 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 100);
     }
 
+    // Restore Auto-Buy Click Power Loop
     if (autoBuyClickPowerUnlocked) {
         if (autoBuyClickPower) autoBuyClickPower.style.display = "none";
         if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
@@ -115,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 100);
     }
 
-    // Interaction Action Click handlers
+    // Planet Click Action
     if (cookieImage) {
         cookieImage.addEventListener('click', (ev) => {
             vladis += clickPower;
@@ -124,6 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Manual Cursor Upgrade Button
     if (cursorButton) {
         cursorButton.addEventListener('click', (ev) => {
             if (vladis >= cursorPrice) {
@@ -135,6 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Buy Auto-Buy Cursors Unlock
     if (autoBuyCursor) {
         autoBuyCursor.addEventListener('click', () => {
             if (vladis >= autoBuyCursorPrice) {
@@ -161,6 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Manual Click Power Upgrade Button
     if (clickPowerButton) {
         clickPowerButton.addEventListener('click', (ev) => {
             if (vladis >= clickPowerPrice) {
@@ -173,6 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Buy Auto-Buy Click Power Unlock
     if (autoBuyClickPower) {
         autoBuyClickPower.addEventListener('click', () => {
             if (vladis >= autoBuyClickPowerPrice) {
@@ -199,6 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Rebirth Processing Logic
     if (rebirthButton) {
         rebirthButton.addEventListener('click', (ev) => {
             if (vladis >= rebirthPrice) {
@@ -219,8 +225,4 @@ document.addEventListener("DOMContentLoaded", () => {
                     autoBuyCursorInterval = null;
                 }
                 if (autoBuyClickPowerInterval) {
-                    clearInterval(autoBuyClickPowerInterval);
-                    autoBuyClickPowerInterval = null;
-                }
-                if (autoBuyCursor) autoBuyCursor.style.display = "block";
-if (autoBuyClickPower) autoBuyClickPower.style.display = "block";saveGame();updateDisplay();}});}if (resetButton) {resetButton.addEventListener('click', () => {if (confirm("Completely reset your Vlada profile data?")) {vladis = 0;cursors = 0;cursorPrice = 10;clickPowerPrice = 50;clickPower = 1;rebirthPrice = 5000;autoBuyCursorPrice = 500;autoBuyClickPowerPrice = 2500;autoBuyCursorUnlocked = false;autoBuyClickPowerUnlocked = false;if (autoBuyCursorInterval) {clearInterval(autoBuyCursorInterval);autoBuyCursorInterval = null;}if (autoBuyClickPowerInterval) {clearInterval(autoBuyClickPowerInterval);autoBuyClickPowerInterval = null;}if (autoBuyCursor) autoBuyCursor.style.display = "block";if (autoBuyClickPower) autoBuyClickPower.style.display = "block";saveGame();updateDisplay();}});}// Passive CPS loopssetInterval(() => {vladis += cursors;saveGame();updateDisplay();}, 1000);// Affordable validation scannersetInterval(() => {if (cursorButton) {if (vladis >= cursorPrice) cursorButton.classList.add("affordable");else cursorButton.classList.remove("affordable");}if (clickPowerButton) {if (vladis >= clickPowerPrice) clickPowerButton.classList.add("affordable");else clickPowerButton.classList.remove("affordable");}}, 100);});
+clearInterval(autoBuyClickPowerInterval);autoBuyClickPowerInterval = null;}if (autoBuyCursor) autoBuyCursor.style.display = "block";if (autoBuyClickPower) autoBuyClickPower.style.display = "block";saveGame();updateDisplay();}});}// Reset Progress Button Logicif (resetButton) {resetButton.addEventListener('click', () => {if (confirm("Completely reset your Vlada profile data?")) {vladis = 0;cursors = 0;cursorPrice = 10;clickPowerPrice = 50;clickPower = 1;rebirthPrice = 5000;autoBuyCursorPrice = 500;autoBuyClickPowerPrice = 2500;autoBuyCursorUnlocked = false;autoBuyClickPowerUnlocked = false;if (autoBuyCursorInterval) {clearInterval(autoBuyCursorInterval);autoBuyCursorInterval = null;}if (autoBuyClickPowerInterval) {clearInterval(autoBuyClickPowerInterval);autoBuyClickPowerInterval = null;}if (autoBuyCursor) autoBuyCursor.style.display = "block";if (autoBuyClickPower) autoBuyClickPower.style.display = "block";saveGame();updateDisplay();}});}// Passive CPS loopssetInterval(() => {vladis += cursors;saveGame();updateDisplay();}, 1000);// Affordable validation scannersetInterval(() => {if (cursorButton) {if (vladis >= cursorPrice) cursorButton.classList.add("affordable");else cursorButton.classList.remove("affordable");}if (clickPowerButton) {if (vladis >= clickPowerPrice) clickPowerButton.classList.add("affordable");else clickPowerButton.classList.remove("affordable");}}, 100);});
