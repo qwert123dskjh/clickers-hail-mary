@@ -19,43 +19,45 @@ function formatNumber(num) {
     return scaled.toFixed(2).replace(/\.00$/, '') + suffix;
 }
 
-// 1. Load data variables immediately so they are available globally
-let cookies = localStorage.getItem("cookies") ? parseInt(localStorage.getItem("cookies")) : 0;
-let cursors = localStorage.getItem("cursors") ? parseInt(localStorage.getItem("cursors")) : 0;
-let cursorPrice = localStorage.getItem("cursorPrice") ? parseInt(localStorage.getItem("cursorPrice")) : 10;
-let clickPowerPrice = localStorage.getItem("clickPowerPrice") ? parseInt(localStorage.getItem("clickPowerPrice")) : 50;
-let clickPower = localStorage.getItem("clickPower") ? parseInt(localStorage.getItem("clickPower")) : 3;
-let rebirthPrice = localStorage.getItem("rebirthPrice") ? parseInt(localStorage.getItem("rebirthPrice")) : 5000;
-let autoBuyCursorPrice = localStorage.getItem("autoBuyCursorPrice") ? parseInt(localStorage.getItem("autoBuyCursorPrice")) : 500;
-let autoBuyClickPowerPrice = localStorage.getItem("autoBuyClickPowerPrice") ? parseInt(localStorage.getItem("autoBuyClickPowerPrice")) : 2500;
+// 1. UNIQUE SEPARATE STORAGE KEYS FOR KENNETH ('kenneth_...')
+let kennies = localStorage.getItem("kenneth_kennies") ? parseInt(localStorage.getItem("kenneth_kennies")) : 0;
+let cursors = localStorage.getItem("kenneth_cursors") ? parseInt(localStorage.getItem("kenneth_cursors")) : 0;
+let cursorPrice = localStorage.getItem("kenneth_cursorPrice") ? parseInt(localStorage.getItem("kenneth_cursorPrice")) : 10;
+let clickPowerPrice = localStorage.getItem("kenneth_clickPowerPrice") ? parseInt(localStorage.getItem("kenneth_clickPowerPrice")) : 50;
+let clickPower = localStorage.getItem("kenneth_clickPower") ? parseInt(localStorage.getItem("kenneth_clickPower")) : 1;
+let rebirthPrice = localStorage.getItem("kenneth_rebirthPrice") ? parseInt(localStorage.getItem("kenneth_rebirthPrice")) : 5000;
+let autoBuyCursorPrice = localStorage.getItem("kenneth_autoBuyCursorPrice") ? parseInt(localStorage.getItem("kenneth_autoBuyCursorPrice")) : 500;
+let autoBuyClickPowerPrice = localStorage.getItem("kenneth_autoBuyClickPowerPrice") ? parseInt(localStorage.getItem("kenneth_autoBuyClickPowerPrice")) : 2500;
+
+let autoBuyCursorUnlocked = localStorage.getItem("kenneth_autoBuyCursorUnlocked") === "true";
+let autoBuyClickPowerUnlocked = localStorage.getItem("kenneth_autoBuyClickPowerUnlocked") === "true";
 let autoBuyIsTrue = false;
 
 let autoBuyCursorInterval = null;
 let autoBuyClickPowerInterval = null;
 
-let autoBuyCursorUnlocked = localStorage.getItem("autoBuyCursorUnlocked") === "true";
-let autoBuyClickPowerUnlocked = localStorage.getItem("autoBuyClickPowerUnlocked") === "true";
-
-
+// Sync system that keeps planets independent but still shares the total score for the index lock
 function saveGame() {
-    localStorage.setItem("cookies", cookies);
-    localStorage.setItem("totalCookies", cookies); 
-    localStorage.setItem("cursors", cursors);
-    localStorage.setItem("cursorPrice", cursorPrice);
-    localStorage.setItem("clickPowerPrice", clickPowerPrice);
-    localStorage.setItem("clickPower", clickPower);
-    localStorage.setItem("rebirthPrice", rebirthPrice);
-    localStorage.setItem("autoBuyCursorPrice", autoBuyCursorPrice);
-    localStorage.setItem("autoBuyClickPowerPrice", autoBuyClickPowerPrice);
-    localStorage.setItem("autoBuyCursorUnlocked", autoBuyCursorUnlocked);
-    localStorage.setItem("autoBuyClickPowerUnlocked", autoBuyClickPowerUnlocked);
+    localStorage.setItem("kenneth_kennies", kennies);
+    localStorage.setItem("kenneth_cursors", cursors);
+    localStorage.setItem("kenneth_cursorPrice", cursorPrice);
+    localStorage.setItem("kenneth_clickPowerPrice", clickPowerPrice);
+    localStorage.setItem("kenneth_clickPower", clickPower);
+    localStorage.setItem("kenneth_rebirthPrice", rebirthPrice);
+    localStorage.setItem("kenneth_autoBuyCursorPrice", autoBuyCursorPrice);
+    localStorage.setItem("kenneth_autoBuyClickPowerPrice", autoBuyClickPowerPrice);
+    localStorage.setItem("kenneth_autoBuyCursorUnlocked", autoBuyCursorUnlocked);
+    localStorage.setItem("kenneth_autoBuyClickPowerUnlocked", autoBuyClickPowerUnlocked);
+
+    // CRUCIAL: Combine Kenneth score into total global clicks so index.html unlocks step 3
+    const amiraliCookies = parseInt(localStorage.getItem("cookies")) || 0; 
+    const vladaCookies = parseInt(localStorage.getItem("vlada_cookies")) || 0;
+    localStorage.setItem("totalCookies", amiraliCookies + kennies + vladaCookies);
 }
 
-
-// 2. WAIT for the HTML document structure to map out fully before finding elements
+// 2. Map Layout Sequence
 document.addEventListener("DOMContentLoaded", () => {
     
-    // Map layout DOM elements safely
     const autoBuyToggle = document.getElementById("autoBuyDropdown");
     const rebirthPriceText = document.getElementById("rebirthPrice");
     const clickPowerPriceText = document.getElementById("clickPowerPrice");
@@ -72,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const rebirthButton = document.getElementById("rebirth");
 
     function updateDisplay() {
-        if (cookieCounter) cookieCounter.innerHTML = formatNumber(cookies);
+        if (cookieCounter) cookieCounter.innerHTML = formatNumber(kennies);
         if (cursorCounter) cursorCounter.innerHTML = formatNumber(cursors);
         if (clickPowerCounter) clickPowerCounter.innerHTML = formatNumber(clickPower);
         if (cursorPriceText) cursorPriceText.innerHTML = formatNumber(cursorPrice);
@@ -81,20 +83,53 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     updateDisplay();
 
-    // Primary Click Button Logic
+    // Restore active state loops if bought earlier
+    if (autoBuyCursorUnlocked) {
+        if (autoBuyCursor) autoBuyCursor.style.display = "none";
+        if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
+        autoBuyCursorInterval = setInterval(() => {
+            if (autoBuyToggle && autoBuyToggle.value === "On") {
+                if (kennies >= cursorPrice) {
+                    kennies -= cursorPrice;
+                    cursors += 1;
+                    cursorPrice = Math.floor(cursorPrice * 1.25);
+                    saveGame();
+                    updateDisplay();
+                }
+            }
+        }, 100);
+    }
+
+    if (autoBuyClickPowerUnlocked) {
+        if (autoBuyClickPower) autoBuyClickPower.style.display = "none";
+        if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
+        autoBuyClickPowerInterval = setInterval(() => {
+            if (autoBuyToggle && autoBuyToggle.value === "On") {
+                if (kennies >= clickPowerPrice) {
+                    kennies -= clickPowerPrice;
+                    clickPower += 1;
+                    clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
+                    saveGame();
+                    updateDisplay();
+                }
+            }
+        }, 100);
+    }
+
+    // Core Click Action
     if (cookieImage) {
         cookieImage.addEventListener('click', (ev) => {
-            cookies += clickPower;
-            if (cookieCounter) cookieCounter.innerHTML = formatNumber(cookies);
+            kennies += clickPower;
+            if (cookieCounter) cookieCounter.innerHTML = formatNumber(kennies);
             saveGame();
         });
     }
 
-    // Upgrade Cursor Shop Button Logic
+    // Purchase Cursor Action
     if (cursorButton) {
         cursorButton.addEventListener('click', (ev) => {
-            if (cookies >= cursorPrice) {
-                cookies -= cursorPrice;
+            if (kennies >= cursorPrice) {
+                kennies -= cursorPrice;
                 cursors += 1;
                 saveGame();
                 updateDisplay();
@@ -102,19 +137,19 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-          // Auto-Buy Cursors Setup
+    // Unlock Auto Buy Cursors
     if (autoBuyCursor) {
         autoBuyCursor.addEventListener('click', () => {
-            if (cookies >= autoBuyCursorPrice) {
-                cookies -= autoBuyCursorPrice;
-                autoBuyCursor.style.display = "none"; 
+            if (kennies >= autoBuyCursorPrice) {
+                kennies -= autoBuyCursorPrice;
+                autoBuyCursor.style.display = "none";
                 autoBuyCursorUnlocked = true;
                 
                 if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
                 autoBuyCursorInterval = setInterval(() => {
                     if (autoBuyToggle && autoBuyToggle.value === "On") {
-                        if (cookies >= cursorPrice) {
-                            cookies -= cursorPrice;
+                        if (kennies >= cursorPrice) {
+                            kennies -= cursorPrice;
                             cursors += 1;
                             cursorPrice = Math.floor(cursorPrice * 1.25);
                             saveGame();
@@ -129,13 +164,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-
-    // Upgrade Click Power Logic
+    // Purchase Click Power Upgrades
     if (clickPowerButton) {
         clickPowerButton.addEventListener('click', (ev) => {
-            if (cookies >= clickPowerPrice) {
-                cookies -= clickPowerPrice;
+            if (kennies >= clickPowerPrice) {
+                kennies -= clickPowerPrice;
                 clickPower += 1;
                 clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
                 saveGame();
@@ -144,24 +177,19 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Auto-Buy Click Power Setup
-        // Auto-Buy Click Power Setup
+    // Unlock Auto Buy Click Power
     if (autoBuyClickPower) {
         autoBuyClickPower.addEventListener('click', () => {
-            // Check if player can afford the UNLOCK itself
-            if (cookies >= autoBuyClickPowerPrice) {
-                cookies -= autoBuyClickPowerPrice;
-                autoBuyClickPower.style.display = "none"; // Hide the buy button forever
+            if (kennies >= autoBuyClickPowerPrice) {
+                kennies -= autoBuyClickPowerPrice;
+                autoBuyClickPower.style.display = "none";
                 autoBuyClickPowerUnlocked = true;
-                // Clear any old intervals just in case
-                if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
                 
-                // Start the background interval loop (runs every 100ms)
+                if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
                 autoBuyClickPowerInterval = setInterval(() => {
-                    // CRUCIAL FIX: Look at the dropdown value dynamically right now!
                     if (autoBuyToggle && autoBuyToggle.value === "On") {
-                        if (cookies >= clickPowerPrice) {
-                            cookies -= clickPowerPrice;
+                        if (kennies >= clickPowerPrice) {
+                            kennies -= clickPowerPrice;
                             clickPower += 1;
                             clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
                             saveGame();
@@ -176,12 +204,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-    // Rebirth Processing Logic
+    // Prestige Reset (Rebirth) Logic
     if (rebirthButton) {
         rebirthButton.addEventListener('click', (ev) => {
-            if (cookies >= rebirthPrice) {
-                cookies = 0;
+            if (kennies >= rebirthPrice) {
+                kennies = 0;
                 cursors = 0;
                 clickPower = clickPower * 2;
                 cursorPrice = 10;
@@ -189,126 +216,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 rebirthPrice = Math.floor(rebirthPrice * 2);
                 autoBuyCursorPrice = Math.floor(autoBuyCursorPrice / 1.5);
                 autoBuyClickPowerPrice = Math.floor(autoBuyClickPowerPrice / 1.5);
+                
                 autoBuyCursorUnlocked = false;
                 autoBuyClickPowerUnlocked = false;
 
-                if (autoBuyCursorInterval) {
-                    clearInterval(autoBuyCursorInterval);
-                    autoBuyCursorInterval = null;
-                }
-                if (autoBuyClickPowerInterval) {
-                    clearInterval(autoBuyClickPowerInterval);
-                    autoBuyClickPowerInterval = null;
-                }
-                if (autoBuyCursor) autoBuyCursor.style.display = "block";
-                if (autoBuyClickPower) autoBuyClickPower.style.display = "block";
-                
-                saveGame();
-                updateDisplay();
-            }
-        });
-    }
-
-
-    // Reset Progress Button Logic
-    if (resetButton) {
-        resetButton.addEventListener('click', () => {
-            if (confirm("Are you sure you want to completely reset your progress?")) {
-                localStorage.clear();
-                cookies = 0;
-                cursors = 0;
-                cursorPrice = 10;
-                clickPowerPrice = 50;
-                clickPower = 1;
-                rebirthPrice = 5000;
-                autoBuyCursorPrice = 500;
-                autoBuyClickPowerPrice = 2500;
-                autoBuyCursorUnlocked = false;
-                autoBuyClickPowerUnlocked = false;
-                if (autoBuyCursorInterval) {
-                    clearInterval(autoBuyCursorInterval);
-                    autoBuyCursorInterval = null;
-                }
-                if (autoBuyClickPowerInterval) {
-                    clearInterval(autoBuyClickPowerInterval);
-                    autoBuyClickPowerInterval = null;
-                }
-                if (autoBuyCursor) autoBuyCursor.style.display = "block";
-                if (autoBuyClickPower) autoBuyClickPower.style.display = "block";
-                
-                saveGame();
-                updateDisplay();
-            }
-        });
-    }
-
-    // Passive generation tracking loop (Adds automated cursor clicks every second)
-    setInterval(() => {
-        cookies += cursors;
-        saveGame();
-        updateDisplay();
-    }, 1000);
-
-    // Active button affordable style updating loop
-    setInterval(() => {
-        if (cursorButton) {
-            if (cookies >= cursorPrice) {
-                cursorButton.classList.add("affordable");
-            } else {
-                cursorButton.classList.remove("affordable");
-            }
-        }
-        if (clickPowerButton) {
-            if (cookies >= clickPowerPrice) {
-clickPowerButton.classList.add("affordable");} else {clickPowerButton.classList.remove("affordable");}}}, 100);});
-    // --- RESTORE AUTO-BUY LOOPS ON PAGE LOAD ---
-    if (autoBuyCursorUnlocked) {
-        if (autoBuyCursor) autoBuyCursor.style.display = "none";
-        autoBuyCursorInterval = setInterval(() => {
-            if (autoBuyToggle && autoBuyToggle.value === "On") {
-                if (cookies >= cursorPrice) {
-                    cookies -= cursorPrice;
-                    cursors += 1;
-                    cursorPrice = Math.floor(cursorPrice * 1.25);
-                    saveGame();
-                    updateDisplay();
-                }
-            }
-        }, 100);
-    }
-
-     // --- RESTORE AUTO-BUY LOOPS ON PAGE LOAD ---
-    // Added safety check: Only run loops if the variables are true AND the buttons are hidden
-    if (autoBuyCursorUnlocked) {
-        if (autoBuyCursor) autoBuyCursor.style.display = "none";
-        
-        if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
-        autoBuyCursorInterval = setInterval(() => {
-            if (autoBuyToggle && autoBuyToggle.value === "On") {
-                if (cookies >= cursorPrice) {
-                    cookies -= cursorPrice;
-                    cursors += 1;
-                    cursorPrice = Math.floor(cursorPrice * 1.25);
-                    saveGame();
-                    updateDisplay();
-                }
-            }
-        }, 100);
-    }
-
-    if (autoBuyClickPowerUnlocked) {
-        if (autoBuyClickPower) autoBuyClickPower.style.display = "none";
-        
-        if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
-        autoBuyClickPowerInterval = setInterval(() => {
-            if (autoBuyToggle && autoBuyToggle.value === "On") {
-                if (cookies >= clickPowerPrice) {
-                    cookies -= clickPowerPrice;
-                    clickPower += 1;
-                    clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
-                    saveGame();
-                    updateDisplay();
-                }
-            }
-        }, 100);
-    }
+                if (autoBuyCursorInterval) {clearInterval(autoBuyCursorInterval);autoBuyCursorInterval = null;}if (autoBuyClickPowerInterval) {clearInterval(autoBuyClickPowerInterval);autoBuyClickPowerInterval = null;}if (autoBuyCursor) autoBuyCursor.style.display = "block";if (autoBuyClickPower) autoBuyClickPower.style.display = "block";saveGame();updateDisplay();}});}// Reset Progress Button Logicif (resetButton) {resetButton.addEventListener('click', () => {if (confirm("Completely reset your Kenneth data? (This won't wipe Amirali!)")) {kennies = 0;cursors = 0;cursorPrice = 10;clickPowerPrice = 50;clickPower = 1;rebirthPrice = 5000;autoBuyCursorPrice = 500;autoBuyClickPowerPrice = 2500;autoBuyCursorUnlocked = false;autoBuyClickPowerUnlocked = false;if (autoBuyCursorInterval) {clearInterval(autoBuyCursorInterval);autoBuyCursorInterval = null;}if (autoBuyClickPowerInterval) {clearInterval(autoBuyClickPowerInterval);autoBuyClickPowerInterval = null;}if (autoBuyCursor) autoBuyCursor.style.display = "block";if (autoBuyClickPower) autoBuyClickPower.style.display = "block";saveGame();updateDisplay();}});}// Passive CPS LoopsetInterval(() => {kennies += cursors;saveGame();updateDisplay();}, 1000);// Affordable CSS Highlighting LoopsetInterval(() => {if (cursorButton) {if (kennies >= cursorPrice) cursorButton.classList.add("affordable");else cursorButton.classList.remove("affordable");}if (clickPowerButton) {if (kennies >= clickPowerPrice) clickPowerButton.classList.add("affordable");else clickPowerButton.classList.remove("affordable");}}, 100);});
