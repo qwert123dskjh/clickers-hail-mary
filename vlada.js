@@ -19,43 +19,44 @@ function formatNumber(num) {
     return scaled.toFixed(2).replace(/\.00$/, '') + suffix;
 }
 
-// 1. Load data variables immediately so they are available globally
-let cookies = localStorage.getItem("cookies") ? parseInt(localStorage.getItem("cookies")) : 0;
-let cursors = localStorage.getItem("cursors") ? parseInt(localStorage.getItem("cursors")) : 0;
-let cursorPrice = localStorage.getItem("cursorPrice") ? parseInt(localStorage.getItem("cursorPrice")) : 10;
-let clickPowerPrice = localStorage.getItem("clickPowerPrice") ? parseInt(localStorage.getItem("clickPowerPrice")) : 50;
-let clickPower = localStorage.getItem("clickPower") ? parseInt(localStorage.getItem("clickPower")) : 5;
-let rebirthPrice = localStorage.getItem("rebirthPrice") ? parseInt(localStorage.getItem("rebirthPrice")) : 5000;
-let autoBuyCursorPrice = localStorage.getItem("autoBuyCursorPrice") ? parseInt(localStorage.getItem("autoBuyCursorPrice")) : 500;
-let autoBuyClickPowerPrice = localStorage.getItem("autoBuyClickPowerPrice") ? parseInt(localStorage.getItem("autoBuyClickPowerPrice")) : 2500;
+// 1. UNIQUE VAULT STORAGE KEYS FOR VLADA ('vlada_...')
+let vladis = localStorage.getItem("vlada_vladis") ? parseInt(localStorage.getItem("vlada_vladis")) : 0;
+let cursors = localStorage.getItem("vlada_cursors") ? parseInt(localStorage.getItem("vlada_cursors")) : 0;
+let cursorPrice = localStorage.getItem("vlada_cursorPrice") ? parseInt(localStorage.getItem("vlada_cursorPrice")) : 10;
+let clickPowerPrice = localStorage.getItem("vlada_clickPowerPrice") ? parseInt(localStorage.getItem("vlada_clickPowerPrice")) : 50;
+let clickPower = localStorage.getItem("vlada_clickPower") ? parseInt(localStorage.getItem("vlada_clickPower")) : 1;
+let rebirthPrice = localStorage.getItem("vlada_rebirthPrice") ? parseInt(localStorage.getItem("vlada_rebirthPrice")) : 5000;
+let autoBuyCursorPrice = localStorage.getItem("vlada_autoBuyCursorPrice") ? parseInt(localStorage.getItem("vlada_autoBuyCursorPrice")) : 500;
+let autoBuyClickPowerPrice = localStorage.getItem("vlada_autoBuyClickPowerPrice") ? parseInt(localStorage.getItem("vlada_autoBuyClickPowerPrice")) : 2500;
+
+let autoBuyCursorUnlocked = localStorage.getItem("vlada_autoBuyCursorUnlocked") === "true";
+let autoBuyClickPowerUnlocked = localStorage.getItem("vlada_autoBuyClickPowerUnlocked") === "true";
 let autoBuyIsTrue = false;
 
 let autoBuyCursorInterval = null;
 let autoBuyClickPowerInterval = null;
 
-let autoBuyCursorUnlocked = localStorage.getItem("autoBuyCursorUnlocked") === "true";
-let autoBuyClickPowerUnlocked = localStorage.getItem("autoBuyClickPowerUnlocked") === "true";
-
-
 function saveGame() {
-    localStorage.setItem("cookies", cookies);
-    localStorage.setItem("totalCookies", cookies); 
-    localStorage.setItem("cursors", cursors);
-    localStorage.setItem("cursorPrice", cursorPrice);
-    localStorage.setItem("clickPowerPrice", clickPowerPrice);
-    localStorage.setItem("clickPower", clickPower);
-    localStorage.setItem("rebirthPrice", rebirthPrice);
-    localStorage.setItem("autoBuyCursorPrice", autoBuyCursorPrice);
-    localStorage.setItem("autoBuyClickPowerPrice", autoBuyClickPowerPrice);
-    localStorage.setItem("autoBuyCursorUnlocked", autoBuyCursorUnlocked);
-    localStorage.setItem("autoBuyClickPowerUnlocked", autoBuyClickPowerUnlocked);
+    localStorage.setItem("vlada_vladis", vladis);
+    localStorage.setItem("vlada_cursors", cursors);
+    localStorage.setItem("vlada_cursorPrice", cursorPrice);
+    localStorage.setItem("vlada_clickPowerPrice", clickPowerPrice);
+    localStorage.setItem("vlada_clickPower", clickPower);
+    localStorage.setItem("vlada_rebirthPrice", rebirthPrice);
+    localStorage.setItem("vlada_autoBuyCursorPrice", autoBuyCursorPrice);
+    localStorage.setItem("vlada_autoBuyClickPowerPrice", autoBuyClickPowerPrice);
+    localStorage.setItem("vlada_autoBuyCursorUnlocked", autoBuyCursorUnlocked);
+    localStorage.setItem("vlada_autoBuyClickPowerUnlocked", autoBuyClickPowerUnlocked);
+
+    // CRUCIAL SYNC: Combine scores across all 3 profiles seamlessly
+    const amiraliCookies = parseInt(localStorage.getItem("cookies")) || 0; 
+    const kennethKennies = parseInt(localStorage.getItem("kenneth_kennies")) || 0;
+    localStorage.setItem("totalCookies", amiraliCookies + kennethKennies + vladis);
 }
 
-
-// 2. WAIT for the HTML document structure to map out fully before finding elements
+// 2. Map Layout Elements
 document.addEventListener("DOMContentLoaded", () => {
     
-    // Map layout DOM elements safely
     const autoBuyToggle = document.getElementById("autoBuyDropdown");
     const rebirthPriceText = document.getElementById("rebirthPrice");
     const clickPowerPriceText = document.getElementById("clickPowerPrice");
@@ -72,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const rebirthButton = document.getElementById("rebirth");
 
     function updateDisplay() {
-        if (cookieCounter) cookieCounter.innerHTML = formatNumber(cookies);
+        if (cookieCounter) cookieCounter.innerHTML = formatNumber(vladis);
         if (cursorCounter) cursorCounter.innerHTML = formatNumber(cursors);
         if (clickPowerCounter) clickPowerCounter.innerHTML = formatNumber(clickPower);
         if (cursorPriceText) cursorPriceText.innerHTML = formatNumber(cursorPrice);
@@ -81,20 +82,52 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     updateDisplay();
 
-    // Primary Click Button Logic
+    // Reload Safe Restore Automators
+    if (autoBuyCursorUnlocked) {
+        if (autoBuyCursor) autoBuyCursor.style.display = "none";
+        if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
+        autoBuyCursorInterval = setInterval(() => {
+            if (autoBuyToggle && autoBuyToggle.value === "On") {
+                if (vladis >= cursorPrice) {
+                    vladis -= cursorPrice;
+                    cursors += 1;
+                    cursorPrice = Math.floor(cursorPrice * 1.25);
+                    saveGame();
+                    updateDisplay();
+                }
+            }
+        }, 100);
+    }
+
+    if (autoBuyClickPowerUnlocked) {
+        if (autoBuyClickPower) autoBuyClickPower.style.display = "none";
+        if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
+        autoBuyClickPowerInterval = setInterval(() => {
+            if (autoBuyToggle && autoBuyToggle.value === "On") {
+                if (vladis >= clickPowerPrice) {
+                    vladis -= clickPowerPrice;
+                    clickPower += 1;
+                    clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
+                    saveGame();
+                    updateDisplay();
+                }
+            }
+        }, 100);
+    }
+
+    // Interaction Action Click handlers
     if (cookieImage) {
         cookieImage.addEventListener('click', (ev) => {
-            cookies += clickPower;
-            if (cookieCounter) cookieCounter.innerHTML = formatNumber(cookies);
+            vladis += clickPower;
+            if (cookieCounter) cookieCounter.innerHTML = formatNumber(vladis);
             saveGame();
         });
     }
 
-    // Upgrade Cursor Shop Button Logic
     if (cursorButton) {
         cursorButton.addEventListener('click', (ev) => {
-            if (cookies >= cursorPrice) {
-                cookies -= cursorPrice;
+            if (vladis >= cursorPrice) {
+                vladis -= cursorPrice;
                 cursors += 1;
                 saveGame();
                 updateDisplay();
@@ -102,19 +135,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-          // Auto-Buy Cursors Setup
     if (autoBuyCursor) {
         autoBuyCursor.addEventListener('click', () => {
-            if (cookies >= autoBuyCursorPrice) {
-                cookies -= autoBuyCursorPrice;
-                autoBuyCursor.style.display = "none"; 
+            if (vladis >= autoBuyCursorPrice) {
+                vladis -= autoBuyCursorPrice;
+                autoBuyCursor.style.display = "none";
                 autoBuyCursorUnlocked = true;
                 
                 if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
                 autoBuyCursorInterval = setInterval(() => {
                     if (autoBuyToggle && autoBuyToggle.value === "On") {
-                        if (cookies >= cursorPrice) {
-                            cookies -= cursorPrice;
+                        if (vladis >= cursorPrice) {
+                            vladis -= cursorPrice;
                             cursors += 1;
                             cursorPrice = Math.floor(cursorPrice * 1.25);
                             saveGame();
@@ -129,13 +161,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-
-    // Upgrade Click Power Logic
     if (clickPowerButton) {
         clickPowerButton.addEventListener('click', (ev) => {
-            if (cookies >= clickPowerPrice) {
-                cookies -= clickPowerPrice;
+            if (vladis >= clickPowerPrice) {
+                vladis -= clickPowerPrice;
                 clickPower += 1;
                 clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
                 saveGame();
@@ -144,24 +173,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Auto-Buy Click Power Setup
-        // Auto-Buy Click Power Setup
     if (autoBuyClickPower) {
         autoBuyClickPower.addEventListener('click', () => {
-            // Check if player can afford the UNLOCK itself
-            if (cookies >= autoBuyClickPowerPrice) {
-                cookies -= autoBuyClickPowerPrice;
-                autoBuyClickPower.style.display = "none"; // Hide the buy button forever
+            if (vladis >= autoBuyClickPowerPrice) {
+                vladis -= autoBuyClickPowerPrice;
+                autoBuyClickPower.style.display = "none";
                 autoBuyClickPowerUnlocked = true;
-                // Clear any old intervals just in case
-                if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
                 
-                // Start the background interval loop (runs every 100ms)
+                if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
                 autoBuyClickPowerInterval = setInterval(() => {
-                    // CRUCIAL FIX: Look at the dropdown value dynamically right now!
                     if (autoBuyToggle && autoBuyToggle.value === "On") {
-                        if (cookies >= clickPowerPrice) {
-                            cookies -= clickPowerPrice;
+                        if (vladis >= clickPowerPrice) {
+                            vladis -= clickPowerPrice;
                             clickPower += 1;
                             clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
                             saveGame();
@@ -176,12 +199,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-    // Rebirth Processing Logic
     if (rebirthButton) {
         rebirthButton.addEventListener('click', (ev) => {
-            if (cookies >= rebirthPrice) {
-                cookies = 0;
+            if (vladis >= rebirthPrice) {
+                vladis = 0;
                 cursors = 0;
                 clickPower = clickPower * 2;
                 cursorPrice = 10;
@@ -189,6 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 rebirthPrice = Math.floor(rebirthPrice * 2);
                 autoBuyCursorPrice = Math.floor(autoBuyCursorPrice / 1.5);
                 autoBuyClickPowerPrice = Math.floor(autoBuyClickPowerPrice / 1.5);
+                
                 autoBuyCursorUnlocked = false;
                 autoBuyClickPowerUnlocked = false;
 
@@ -201,114 +223,4 @@ document.addEventListener("DOMContentLoaded", () => {
                     autoBuyClickPowerInterval = null;
                 }
                 if (autoBuyCursor) autoBuyCursor.style.display = "block";
-                if (autoBuyClickPower) autoBuyClickPower.style.display = "block";
-                
-                saveGame();
-                updateDisplay();
-            }
-        });
-    }
-
-
-    // Reset Progress Button Logic
-    if (resetButton) {
-        resetButton.addEventListener('click', () => {
-            if (confirm("Are you sure you want to completely reset your progress?")) {
-                localStorage.clear();
-                cookies = 0;
-                cursors = 0;
-                cursorPrice = 10;
-                clickPowerPrice = 50;
-                clickPower = 1;
-                rebirthPrice = 5000;
-                autoBuyCursorPrice = 500;
-                autoBuyClickPowerPrice = 2500;
-                autoBuyCursorUnlocked = false;
-                autoBuyClickPowerUnlocked = false;
-                if (autoBuyCursorInterval) {
-                    clearInterval(autoBuyCursorInterval);
-                    autoBuyCursorInterval = null;
-                }
-                if (autoBuyClickPowerInterval) {
-                    clearInterval(autoBuyClickPowerInterval);
-                    autoBuyClickPowerInterval = null;
-                }
-                if (autoBuyCursor) autoBuyCursor.style.display = "block";
-                if (autoBuyClickPower) autoBuyClickPower.style.display = "block";
-                
-                saveGame();
-                updateDisplay();
-            }
-        });
-    }
-
-    // Passive generation tracking loop (Adds automated cursor clicks every second)
-    setInterval(() => {
-        cookies += cursors;
-        saveGame();
-        updateDisplay();
-    }, 1000);
-
-    // Active button affordable style updating loop
-    setInterval(() => {
-        if (cursorButton) {
-            if (cookies >= cursorPrice) {
-                cursorButton.classList.add("affordable");
-            } else {
-                cursorButton.classList.remove("affordable");
-            }
-        }
-        if (clickPowerButton) {
-            if (cookies >= clickPowerPrice) {
-clickPowerButton.classList.add("affordable");} else {clickPowerButton.classList.remove("affordable");}}}, 100);});
-    // --- RESTORE AUTO-BUY LOOPS ON PAGE LOAD ---
-    if (autoBuyCursorUnlocked) {
-        if (autoBuyCursor) autoBuyCursor.style.display = "none";
-        autoBuyCursorInterval = setInterval(() => {
-            if (autoBuyToggle && autoBuyToggle.value === "On") {
-                if (cookies >= cursorPrice) {
-                    cookies -= cursorPrice;
-                    cursors += 1;
-                    cursorPrice = Math.floor(cursorPrice * 1.25);
-                    saveGame();
-                    updateDisplay();
-                }
-            }
-        }, 100);
-    }
-
-     // --- RESTORE AUTO-BUY LOOPS ON PAGE LOAD ---
-    // Added safety check: Only run loops if the variables are true AND the buttons are hidden
-    if (autoBuyCursorUnlocked) {
-        if (autoBuyCursor) autoBuyCursor.style.display = "none";
-        
-        if (autoBuyCursorInterval) clearInterval(autoBuyCursorInterval);
-        autoBuyCursorInterval = setInterval(() => {
-            if (autoBuyToggle && autoBuyToggle.value === "On") {
-                if (cookies >= cursorPrice) {
-                    cookies -= cursorPrice;
-                    cursors += 1;
-                    cursorPrice = Math.floor(cursorPrice * 1.25);
-                    saveGame();
-                    updateDisplay();
-                }
-            }
-        }, 100);
-    }
-
-    if (autoBuyClickPowerUnlocked) {
-        if (autoBuyClickPower) autoBuyClickPower.style.display = "none";
-        
-        if (autoBuyClickPowerInterval) clearInterval(autoBuyClickPowerInterval);
-        autoBuyClickPowerInterval = setInterval(() => {
-            if (autoBuyToggle && autoBuyToggle.value === "On") {
-                if (cookies >= clickPowerPrice) {
-                    cookies -= clickPowerPrice;
-                    clickPower += 1;
-                    clickPowerPrice = Math.floor(clickPowerPrice * 1.1);
-                    saveGame();
-                    updateDisplay();
-                }
-            }
-        }, 100);
-    }
+if (autoBuyClickPower) autoBuyClickPower.style.display = "block";saveGame();updateDisplay();}});}if (resetButton) {resetButton.addEventListener('click', () => {if (confirm("Completely reset your Vlada profile data?")) {vladis = 0;cursors = 0;cursorPrice = 10;clickPowerPrice = 50;clickPower = 1;rebirthPrice = 5000;autoBuyCursorPrice = 500;autoBuyClickPowerPrice = 2500;autoBuyCursorUnlocked = false;autoBuyClickPowerUnlocked = false;if (autoBuyCursorInterval) {clearInterval(autoBuyCursorInterval);autoBuyCursorInterval = null;}if (autoBuyClickPowerInterval) {clearInterval(autoBuyClickPowerInterval);autoBuyClickPowerInterval = null;}if (autoBuyCursor) autoBuyCursor.style.display = "block";if (autoBuyClickPower) autoBuyClickPower.style.display = "block";saveGame();updateDisplay();}});}// Passive CPS loopssetInterval(() => {vladis += cursors;saveGame();updateDisplay();}, 1000);// Affordable validation scannersetInterval(() => {if (cursorButton) {if (vladis >= cursorPrice) cursorButton.classList.add("affordable");else cursorButton.classList.remove("affordable");}if (clickPowerButton) {if (vladis >= clickPowerPrice) clickPowerButton.classList.add("affordable");else clickPowerButton.classList.remove("affordable");}}, 100);});
