@@ -99,6 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Auto-Buy Cursors Setup
     if (autoBuyCursor) {
         autoBuyCursor.addEventListener('click', () => {
+            if (autoBuyToggle && autoBuyToggle.value === "On") {
+                    
             if (cookies >= autoBuyCursorPrice) {
                 cookies -= autoBuyCursorPrice;
                 autoBuyCursor.style.display = "none";
@@ -113,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         updateDisplay();
                     }
                 }, 100);
+            }
 
                 if (autoBuyToggle && autoBuyToggle.value === "On") {
                     autoBuyIsTrue = true;
