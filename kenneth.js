@@ -41,8 +41,8 @@ function saveGame() {
     localStorage.setItem("kenneth_kennies", kennies);
     localStorage.setItem("kenneth_cursors", cursors);
     localStorage.setItem("kenneth_cursorPrice", cursorPrice);
-    localStorage.setItem("kenneth_clickPowerPrice", clickPowerPrice);
-    localStorage.setItem("kenneth_clickPower", clickPower);
+    localStorage.setItem("kenneth_clickPowerPrice", clickPowerPrice); // FIX: Added kenneth_ prefix
+    localStorage.setItem("kenneth_clickPower", clickPower);           // FIX: Added kenneth_ prefix
     localStorage.setItem("kenneth_rebirthPrice", rebirthPrice);
     localStorage.setItem("kenneth_autoBuyCursorPrice", autoBuyCursorPrice);
     localStorage.setItem("kenneth_autoBuyClickPowerPrice", autoBuyClickPowerPrice);
